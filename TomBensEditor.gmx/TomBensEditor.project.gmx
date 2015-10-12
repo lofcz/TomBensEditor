@@ -8,6 +8,17 @@
   <sprites name="sprites"/>
   <backgrounds name="background"/>
   <paths name="paths"/>
+  <scripts name="scripts">
+    <scripts name="LoF">
+      <script>scripts\scrInitiseRoom.gml</script>
+    </scripts>
+  </scripts>
+  <objects name="objects">
+    <object>objects\oController</object>
+  </objects>
+  <rooms name="rooms">
+    <room>rooms\formMain</room>
+  </rooms>
   <help>
     <rtf>help.rtf</rtf>
   </help>
