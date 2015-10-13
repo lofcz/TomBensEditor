@@ -85,6 +85,7 @@ dif_x= mouse_x - start_xx  ;  // X-ová souřadnice
 dif_y= mouse_y - start_yy  ;  // Y-ová souřadnice
 }
 
+
 </string>
           </argument>
         </arguments>
@@ -177,12 +178,12 @@ if (oCursorMode.value==ADD) // Pokud tvoříme povrch
         <arguments>
           <argument>
             <kind>1</kind>
-            <string>///výběr
+            <string>///výběr a zničení
 
 
    //clicked_index = -1;  // Nastavíme vybraný povrch na "nevybraný"
    
-   //if (ds_list_size(surface_list) &gt; 0) // Je zbytečné kopírovat podmínku - for je cyklus s podmínkou na začátku, při size 0 se nic neprovede
+   //if (ds_list_size(surface_list) &gt; 0) // Je zbytečné kopírovat podmínku - for je cyklus s podmínkou na začátku, při size 0 se nic neprovede - DÍKY
       
    if oCursorMode.value==SELECT
    {
@@ -196,6 +197,26 @@ if (oCursorMode.value==ADD) // Pokud tvoříme povrch
                }      
             }           
     }    
+    
+    if (oCursorMode.value = KILL) // Pakliže máme vybraný stav kursoru jako "kill"
+       {
+       for (a = 0; a &lt; ds_list_size(surface_list); a++) // Iterujeme list povrchů
+            {
+           if point_in_rectangle(mouse_x,mouse_y,start_x[| a],start_y[| a],temp_x2[| a],temp_y2[| a]) // Pokud máme kursor na povrchu
+               {
+                // Ze všech potřebných seznamů odebereme adekvátní položku, už aby se to sjednotilo do ds_grid, tohle je na zbláznění 
+                ds_list_delete(surface_list,a);
+                ds_list_delete(start_x,a);
+                ds_list_delete(start_y,a);
+                ds_list_delete(temp_x2,a);
+                ds_list_delete(temp_y2,a);
+                ds_list_delete(selected,a);
+                ds_list_delete(baked,a);
+                
+                break; // Ukončíme cykl
+               }      
+            }           
+      }    
         
 
    
@@ -293,6 +314,7 @@ if (oCursorMode.value==ADD) // Pokud tvoříme povrch
             <string>/// na zvážení - HTML export se pravděpodobně konat nebude
 draw_set_color(c_black);
 draw_set_alpha(1);
+
 
 
 
