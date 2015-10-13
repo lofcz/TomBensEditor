@@ -40,6 +40,11 @@ temp_y2          = ds_list_create(); // y2
 clicked          = 0; // Kontrola, zda bylo tento step kliknuto myší (bool)
 creating_surface = 0; // Zda vytvářime surface (bool)
 clicked_index    = -1; // Index vybraného povrchu, -1 značí žádný povrch (int32)
+
+max_x = 0;
+min_x = 0;
+max_y = 0;
+min_y = 0;
 </string>
           </argument>
         </arguments>
@@ -77,13 +82,20 @@ draw_set_alpha(1);
 
 if (mouse_check_button_pressed(mb_left)) // Pokud klikneme LMB
    {
-   clicked_index = -1;  // Nastavíme vybraný povrch na ůnevybraný"
+   clicked_index = -1;  // Nastavíme vybraný povrch na nevybraný"
    
    if (ds_list_size(surface_list) &gt; 0) // Je zbytečné iterovat, pokud nejsou vytvořené žádné povrchy
       {
       for (a = 0; a &lt; ds_list_size(surface_list); a++) // Iterujeme list povrchů
             {
-            if (mouse_x &gt; start_x[| a] &amp;&amp; mouse_x &lt; temp_x2[| a] &amp;&amp; mouse_y &gt; start_y[| a] &amp;&amp; mouse_y &lt; temp_y2[| a]) // Pokud je myš v čtverci representující iterovaný povrch
+            
+            // Vytvoříme souřadnice prohledávaného čtverce
+           min_x = min(start_x[| a],temp_x2[| a]);
+           min_y = min(start_y[| a],temp_y2[| a]);
+           max_x = max(start_x[| a],temp_x2[| a]);
+           max_y = max(start_y[| a],temp_y2[| a]);
+            
+            if (point_in_rectangle(mouse_x,mouse_y,min_x,min_y,max_x,max_y)) // Pokud je myš v čtverci representující iterovaný povrch
                {
                 clicked_index = a; // Uložíme si index tohoto povrchu 
                 break; // Dál už iterovat nepotřebujeme
@@ -112,12 +124,18 @@ if (creating_surface) // Pokud tvoříme povrch
         
         ds_list_add(surface_list,surface_create(room_width,room_height)); // Do listu uložíme nový povrch    
         
-        // Do adekvátních listů zapíšeme souřadnice x1,y1,x2,y2   
-        ds_list_add(temp_x2,mouse_x); 
-        ds_list_add(temp_y2,mouse_y);       
-        ds_list_add(start_x,start_xx);
-        ds_list_add(start_y,start_yy);
-
+        // Seřadíme souřadnice
+           min_x = min(start_xx,mouse_x);
+           min_y = min(start_yy,mouse_y);
+           max_x = max(start_xx,mouse_x);
+           max_y = max(start_yy,mouse_y);
+           
+        // Do adekvátních listů zapíšeme souřadnice x1,y1,x2,y2             
+           ds_list_add(temp_x2,max_x); 
+           ds_list_add(temp_y2,max_y);       
+           ds_list_add(start_x,min_x);
+           ds_list_add(start_y,min_y);           
+      
         creating_surface = 0; // Povrch je vytvořen, můžeme vynulovat proměnnou
        }
    }
@@ -141,7 +159,7 @@ if (creating_surface) // Pokud tvoříme povrch
                draw_text(start_x[| a],start_y[| a], "My id in list is: "+string(a));
                
                // Pokud je povrch označený jako aktivní, vypíšeme to
-               if (clicked_index = a) {draw_text(start_x[| a],start_y[| a]+20, "I am active");}
+               if (clicked_index = a &amp;&amp; clicked_index != -1) {draw_text(start_x[| a],start_y[| a]+20, "I am active ");}
                }
         surface_reset_target(); // Jako cíl kreslení nastavíme application_surface
         
