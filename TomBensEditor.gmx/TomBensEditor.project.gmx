@@ -23,6 +23,7 @@
   </scripts>
   <objects name="objects">
     <object>objects\oCursorMode</object>
+    <object>objects\oController</object>
   </objects>
   <rooms name="rooms">
     <room>rooms\formMain</room>
