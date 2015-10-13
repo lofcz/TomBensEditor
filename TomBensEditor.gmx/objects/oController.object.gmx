@@ -43,6 +43,7 @@ baked            = ds_list_create(); // zapečení obsahu
 clicked          = 0; // Kontrola, zda bylo tento step kliknuto myší (bool)
 creating_surface = 0; // Zda vytvářime surface (bool)
 clicked_index    = -1; // Index vybraného povrchu, -1 značí žádný povrch (int32)
+<<<<<<< HEAD
 moving           = 0; // Zda je tažen (bool)
 
 
@@ -55,6 +56,13 @@ dif_y=0;       // rozdílová Y
 //jeden surface jako zdroj obsahu - vytvoření v Draw
 ssource=-1
 
+=======
+
+max_x = 0;
+min_x = 0;
+max_y = 0;
+min_y = 0;
+>>>>>>> origin/master
 </string>
           </argument>
         </arguments>
@@ -136,6 +144,7 @@ dif_y= mouse_y - start_yy  ;  // Y-ová souřadnice
             <kind>1</kind>
             <string>///dokončení tvorby nového a zápis do ds_
 
+<<<<<<< HEAD
 if (oCursorMode.value==ADD) // Pokud tvoříme povrch
    { 
         surface_x = abs(mouse_x-start_xx); // Šířka surface (prozatím unused)
@@ -181,6 +190,11 @@ if (oCursorMode.value==ADD) // Pokud tvoříme povrch
 
 
    //clicked_index = -1;  // Nastavíme vybraný povrch na "nevybraný"
+=======
+if (mouse_check_button_pressed(mb_left)) // Pokud klikneme LMB
+   {
+   clicked_index = -1;  // Nastavíme vybraný povrch na nevybraný"
+>>>>>>> origin/master
    
    //if (ds_list_size(surface_list) &gt; 0) // Je zbytečné kopírovat podmínku - for je cyklus s podmínkou na začátku, při size 0 se nic neprovede
       
@@ -188,8 +202,19 @@ if (oCursorMode.value==ADD) // Pokud tvoříme povrch
    {
       for (a = 0; a &lt; ds_list_size(surface_list); a++) // Iterujeme list povrchů
             {
+<<<<<<< HEAD
             //if (mouse_x &gt; start_x[| a] &amp;&amp; mouse_x &lt; temp_x2[| a] &amp;&amp; mouse_y &gt; start_y[| a] &amp;&amp; mouse_y &lt; temp_y2[| a]) // Pokud je myš v čtverci representující iterovaný povrch   
             if point_in_rectangle(mouse_x,mouse_y,start_x[| a],start_y[| a],temp_x2[| a],temp_y2[| a])
+=======
+            
+            // Vytvoříme souřadnice prohledávaného čtverce
+           min_x = min(start_x[| a],temp_x2[| a]);
+           min_y = min(start_y[| a],temp_y2[| a]);
+           max_x = max(start_x[| a],temp_x2[| a]);
+           max_y = max(start_y[| a],temp_y2[| a]);
+            
+            if (point_in_rectangle(mouse_x,mouse_y,min_x,min_y,max_x,max_y)) // Pokud je myš v čtverci representující iterovaný povrch
+>>>>>>> origin/master
                {
                 selected[| a]=!selected[| a]; //select - deselect
                 break; // Dál už iterovat nepotřebujeme
@@ -266,6 +291,7 @@ if (oCursorMode.value==ADD) // Pokud tvoříme povrch
     
     }
         
+<<<<<<< HEAD
 
    
 </string>
@@ -358,6 +384,22 @@ if !surface_exists(ssource) ssource=surface_create(room_width,room_height);
 if (oCursorMode.value==ADD) &amp;&amp; (creating_surface==1) // Pokud tvoříme povrch
    {
     draw_rectangle(start_xx,start_yy,mouse_x,mouse_y,1); // Vykreslíme obdélník od počátečních k aktuálním souřadnicím kurzoru
+=======
+        // Seřadíme souřadnice
+           min_x = min(start_xx,mouse_x);
+           min_y = min(start_yy,mouse_y);
+           max_x = max(start_xx,mouse_x);
+           max_y = max(start_yy,mouse_y);
+           
+        // Do adekvátních listů zapíšeme souřadnice x1,y1,x2,y2             
+           ds_list_add(temp_x2,max_x); 
+           ds_list_add(temp_y2,max_y);       
+           ds_list_add(start_x,min_x);
+           ds_list_add(start_y,min_y);           
+      
+        creating_surface = 0; // Povrch je vytvořen, můžeme vynulovat proměnnou
+       }
+>>>>>>> origin/master
    }
    
 </string>
@@ -493,7 +535,11 @@ if (oCursorMode.value==ADD) &amp;&amp; (creating_surface==1) // Pokud tvoříme 
                draw_text(x1,y1, "My id in list is: "+string(a));
                
                // Pokud je povrch označený jako aktivní, vypíšeme to
+<<<<<<< HEAD
                if (clicked_index = a) {draw_text(x1,y1+20, "I am active");}
+=======
+               if (clicked_index = a &amp;&amp; clicked_index != -1) {draw_text(start_x[| a],start_y[| a]+20, "I am active ");}
+>>>>>>> origin/master
                }
                
 </string>
