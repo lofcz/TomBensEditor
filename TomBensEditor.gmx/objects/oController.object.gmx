@@ -34,12 +34,240 @@ start_x          = ds_list_create(); // x1
 start_y          = ds_list_create(); // y1
 temp_x2          = ds_list_create(); // x2
 temp_y2          = ds_list_create(); // y2
+selected         = ds_list_create(); // vybráno (bool)
+baked            = ds_list_create(); // zapečení obsahu
+
 
 
 // Proměnné pro práci se selekcí a vytváření povrchů
 clicked          = 0; // Kontrola, zda bylo tento step kliknuto myší (bool)
 creating_surface = 0; // Zda vytvářime surface (bool)
 clicked_index    = -1; // Index vybraného povrchu, -1 značí žádný povrch (int32)
+moving           = 0; // Zda je tažen (bool)
+
+
+//průběžné
+start_xx = 0;  // X-ová souřadnice
+start_yy = 0;  // Y-ová souřadnice
+dif_x=0;       // rozdílová X
+dif_y=0;       // rozdílová Y
+
+//jeden surface jako zdroj obsahu - vytvoření v Draw
+ssource=-1
+
+</string>
+          </argument>
+        </arguments>
+      </action>
+    </event>
+    <event eventtype="3" enumb="0">
+      <action>
+        <libid>1</libid>
+        <id>603</id>
+        <kind>7</kind>
+        <userelative>0</userelative>
+        <isquestion>0</isquestion>
+        <useapplyto>-1</useapplyto>
+        <exetype>2</exetype>
+        <functionname></functionname>
+        <codestring></codestring>
+        <whoName>self</whoName>
+        <relative>0</relative>
+        <isnot>0</isnot>
+        <arguments>
+          <argument>
+            <kind>1</kind>
+            <string>///Přemisťování surface
+
+if moving==1
+{
+dif_x= mouse_x - start_xx  ;  // X-ová souřadnice
+dif_y= mouse_y - start_yy  ;  // Y-ová souřadnice
+}
+
+</string>
+          </argument>
+        </arguments>
+      </action>
+    </event>
+    <event eventtype="6" enumb="56">
+      <action>
+        <libid>1</libid>
+        <id>603</id>
+        <kind>7</kind>
+        <userelative>0</userelative>
+        <isquestion>0</isquestion>
+        <useapplyto>-1</useapplyto>
+        <exetype>2</exetype>
+        <functionname></functionname>
+        <codestring></codestring>
+        <whoName>self</whoName>
+        <relative>0</relative>
+        <isnot>0</isnot>
+        <arguments>
+          <argument>
+            <kind>1</kind>
+            <string>///moving - zastavení
+
+    if (oCursorMode.value==MOVE) // Pokud není vybraný žádný povrch a kliklo se, vytváříme nový povrch
+    {
+    moving = 0; // Posunujeme povrch
+    }
+
+</string>
+          </argument>
+        </arguments>
+      </action>
+      <action>
+        <libid>1</libid>
+        <id>603</id>
+        <kind>7</kind>
+        <userelative>0</userelative>
+        <isquestion>0</isquestion>
+        <useapplyto>-1</useapplyto>
+        <exetype>2</exetype>
+        <functionname></functionname>
+        <codestring></codestring>
+        <whoName>self</whoName>
+        <relative>0</relative>
+        <isnot>0</isnot>
+        <arguments>
+          <argument>
+            <kind>1</kind>
+            <string>///dokončení tvorby nového a zápis do ds_
+
+if (oCursorMode.value==ADD) // Pokud tvoříme povrch
+   { 
+        surface_x = abs(mouse_x-start_xx); // Šířka surface (prozatím unused)
+        surface_y = abs(mouse_y-start_yy); // Výška surface (prozatím unused)    
+        
+        ds_list_add(surface_list,surface_create(surface_x,surface_y)); // Do listu uložíme nový povrch    
+        
+        // Do adekvátních listů zapíšeme souřadnice x1,y1,x2,y2   
+        ds_list_add(temp_x2,max(mouse_x,start_xx)); 
+        ds_list_add(temp_y2,max(mouse_y,start_yy));       
+        ds_list_add(start_x,min(mouse_x,start_xx));
+        ds_list_add(start_y,min(mouse_y,start_yy));
+        ds_list_add(baked,0);
+        
+
+        creating_surface = 0; // Povrch je vytvořen, můžeme vynulovat proměnnou
+       }
+       
+       
+</string>
+          </argument>
+        </arguments>
+      </action>
+    </event>
+    <event eventtype="6" enumb="53">
+      <action>
+        <libid>1</libid>
+        <id>603</id>
+        <kind>7</kind>
+        <userelative>0</userelative>
+        <isquestion>0</isquestion>
+        <useapplyto>-1</useapplyto>
+        <exetype>2</exetype>
+        <functionname></functionname>
+        <codestring></codestring>
+        <whoName>self</whoName>
+        <relative>0</relative>
+        <isnot>0</isnot>
+        <arguments>
+          <argument>
+            <kind>1</kind>
+            <string>///výběr
+
+
+   //clicked_index = -1;  // Nastavíme vybraný povrch na "nevybraný"
+   
+   //if (ds_list_size(surface_list) &gt; 0) // Je zbytečné kopírovat podmínku - for je cyklus s podmínkou na začátku, při size 0 se nic neprovede
+      
+   if oCursorMode.value==SELECT
+   {
+      for (a = 0; a &lt; ds_list_size(surface_list); a++) // Iterujeme list povrchů
+            {
+            //if (mouse_x &gt; start_x[| a] &amp;&amp; mouse_x &lt; temp_x2[| a] &amp;&amp; mouse_y &gt; start_y[| a] &amp;&amp; mouse_y &lt; temp_y2[| a]) // Pokud je myš v čtverci representující iterovaný povrch   
+            if point_in_rectangle(mouse_x,mouse_y,start_x[| a],start_y[| a],temp_x2[| a],temp_y2[| a])
+               {
+                selected[| a]=!selected[| a]; //select - deselect
+                break; // Dál už iterovat nepotřebujeme
+               }      
+            }           
+    }    
+        
+
+   
+   
+</string>
+          </argument>
+        </arguments>
+      </action>
+      <action>
+        <libid>1</libid>
+        <id>603</id>
+        <kind>7</kind>
+        <userelative>0</userelative>
+        <isquestion>0</isquestion>
+        <useapplyto>-1</useapplyto>
+        <exetype>2</exetype>
+        <functionname></functionname>
+        <codestring></codestring>
+        <whoName>self</whoName>
+        <relative>0</relative>
+        <isnot>0</isnot>
+        <arguments>
+          <argument>
+            <kind>1</kind>
+            <string>///start move
+
+    if (oCursorMode.value==MOVE)&amp;&amp; moving==0 // Pokud není vybraný žádný povrch a kliklo se, vytváříme nový povrch
+    {
+    moving = 1; // Posunujeme povrchy
+   
+    // Do 2D vektoru si uložíme souřadnice kurzoru(x,y)
+    start_xx = mouse_x;  // X-ová souřadnice
+    start_yy = mouse_y;  // Y-ová souřadnice
+    
+    }
+        
+
+</string>
+          </argument>
+        </arguments>
+      </action>
+      <action>
+        <libid>1</libid>
+        <id>603</id>
+        <kind>7</kind>
+        <userelative>0</userelative>
+        <isquestion>0</isquestion>
+        <useapplyto>-1</useapplyto>
+        <exetype>2</exetype>
+        <functionname></functionname>
+        <codestring></codestring>
+        <whoName>self</whoName>
+        <relative>0</relative>
+        <isnot>0</isnot>
+        <arguments>
+          <argument>
+            <kind>1</kind>
+            <string>///start tvoření nového   
+    
+    if (oCursorMode.value==ADD) // Pokud není vybraný žádný povrch a kliklo se, vytváříme nový povrch
+    {
+    creating_surface = 1; // Vytváříme nový povrch
+    
+    
+    // Do 2D vektoru si uložíme souřadnice kurzoru(x,y)
+    start_xx = mouse_x;  // X-ová souřadnice
+    start_yy = mouse_y;  // Y-ová souřadnice
+    
+    }
+        
+
+   
 </string>
           </argument>
         </arguments>
@@ -62,92 +290,251 @@ clicked_index    = -1; // Index vybraného povrchu, -1 značí žádný povrch (
         <arguments>
           <argument>
             <kind>1</kind>
-            <string>/// Logika vykreslení surfaces
-
-/*
-Nedořešené - při vytváření povrchu se souřadnice uloží správně pouze pokud jsou zleva doprava, zezhora dolů. 
-Opravím 13.10 
-
-*/
-
-
-// Nastavíme výchozí hodnotu pro vykreslování, víme jak na neinicializované c&amp;a reaguje HTML5 export
+            <string>/// na zvážení - HTML export se pravděpodobně konat nebude
 draw_set_color(c_black);
 draw_set_alpha(1);
 
-if (mouse_check_button_pressed(mb_left)) // Pokud klikneme LMB
-   {
-   clicked_index = -1;  // Nastavíme vybraný povrch na ůnevybraný"
-   
-   if (ds_list_size(surface_list) &gt; 0) // Je zbytečné iterovat, pokud nejsou vytvořené žádné povrchy
-      {
-      for (a = 0; a &lt; ds_list_size(surface_list); a++) // Iterujeme list povrchů
-            {
-            if (mouse_x &gt; start_x[| a] &amp;&amp; mouse_x &lt; temp_x2[| a] &amp;&amp; mouse_y &gt; start_y[| a] &amp;&amp; mouse_y &lt; temp_y2[| a]) // Pokud je myš v čtverci representující iterovaný povrch
-               {
-                clicked_index = a; // Uložíme si index tohoto povrchu 
-                break; // Dál už iterovat nepotřebujeme
-               }      
-            }           
-        }
-        
-    if (clicked_index = -1) // Pokud není vybraný žádný povrch a kliklo se, vytváříme nový povrch
-    {
-    creating_surface = 1; // Vytváříme nový povrch
-    }
-        
-    // Do 2D vektoru si uložíme souřadnice kurzoru(x,y)
-    start_xx = mouse_x;  // X-ová souřadnice
-    start_yy = mouse_y;  // Y-ová souřadnice
-   }
-   
-if (creating_surface) // Pokud tvoříme povrch
+
+
+</string>
+          </argument>
+        </arguments>
+      </action>
+      <action>
+        <libid>1</libid>
+        <id>603</id>
+        <kind>7</kind>
+        <userelative>0</userelative>
+        <isquestion>0</isquestion>
+        <useapplyto>-1</useapplyto>
+        <exetype>2</exetype>
+        <functionname></functionname>
+        <codestring></codestring>
+        <whoName>self</whoName>
+        <relative>0</relative>
+        <isnot>0</isnot>
+        <arguments>
+          <argument>
+            <kind>1</kind>
+            <string>///vyplnění zdrojového surface
+if !surface_exists(ssource) ssource=surface_create(room_width,room_height);
+
+// už by měl existovat - vyplnit
+  surface_set_target(ssource);
+  draw_background_tiled_ext
+    ( 
+    background0,   //index
+    image_index,0, //poloha - jízda
+    2,2,            //zvětšit
+    c_white,1      //blend
+    )
+   surface_reset_target(); 
+
+
+ 
+
+</string>
+          </argument>
+        </arguments>
+      </action>
+      <action>
+        <libid>1</libid>
+        <id>603</id>
+        <kind>7</kind>
+        <userelative>0</userelative>
+        <isquestion>0</isquestion>
+        <useapplyto>-1</useapplyto>
+        <exetype>2</exetype>
+        <functionname></functionname>
+        <codestring></codestring>
+        <whoName>self</whoName>
+        <relative>0</relative>
+        <isnot>0</isnot>
+        <arguments>
+          <argument>
+            <kind>1</kind>
+            <string>///Obdélník při vytváření
+
+if (oCursorMode.value==ADD) &amp;&amp; (creating_surface==1) // Pokud tvoříme povrch
    {
     draw_rectangle(start_xx,start_yy,mouse_x,mouse_y,1); // Vykreslíme obdélník od počátečních k aktuálním souřadnicím kurzoru
-    
-    if (mouse_check_button_released(mb_left)) // Pokud pustíme LMB
-       {       
-        surface_x = abs(mouse_x-start_x); // Šířka surface (prozatím unused)
-        surface_y = abs(mouse_y-start_y); // Výška surface (prozatím unused)    
-        
-        ds_list_add(surface_list,surface_create(room_width,room_height)); // Do listu uložíme nový povrch    
-        
-        // Do adekvátních listů zapíšeme souřadnice x1,y1,x2,y2   
-        ds_list_add(temp_x2,mouse_x); 
-        ds_list_add(temp_y2,mouse_y);       
-        ds_list_add(start_x,start_xx);
-        ds_list_add(start_y,start_yy);
-
-        creating_surface = 0; // Povrch je vytvořen, můžeme vynulovat proměnnou
-       }
    }
+   
+</string>
+          </argument>
+        </arguments>
+      </action>
+      <action>
+        <libid>1</libid>
+        <id>603</id>
+        <kind>7</kind>
+        <userelative>0</userelative>
+        <isquestion>0</isquestion>
+        <useapplyto>-1</useapplyto>
+        <exetype>2</exetype>
+        <functionname></functionname>
+        <codestring></codestring>
+        <whoName>self</whoName>
+        <relative>0</relative>
+        <isnot>0</isnot>
+        <arguments>
+          <argument>
+            <kind>1</kind>
+            <string>/// Vykreslení všech surfaces
 
-   if (ds_list_size(surface_list) &gt; 0) // Pokud existují nějaké povrchy
-      {
-
+   
+   
+       
         for (a = 0; a &lt; ds_list_size(surface_list); a++) // Proiterujeme list s povrchy
             {
-            surface_set_target(surface_list[| a]); // Jako cíl kreslení nastavíme iterovaný povrch
-            
-            if (!creating_surface) // kreslíme za předpokladu, že nevytváříme povrch
+          
+               var x1=start_x[| a];
+               var y1=start_y[| a];
+               var x2=temp_x2[| a];
+               var y2=temp_y2[| a];
+               
+            if selected[| a]==1 &amp;&amp; oCursorMode.value==MOVE //pohybujeme
+            {
+             x1=start_x[| a]+dif_x;
+             y1=start_y[| a]+dif_y;
+             x2=temp_x2[| a]+dif_x;
+             y2=temp_y2[| a]+dif_y;
+            }
+        
+        //obsah kopíruje source pokud není zapečen
+        if baked[| a]==0 surface_copy_part(surface_list[| a],0,0,ssource,x1,y1,x2-x1,y2-y1);
+        
+        draw_surface(surface_list[| a],x1,y1); // vykreslíme iterovaný povrch
+           }
+    
+           
+           
+     
+</string>
+          </argument>
+        </arguments>
+      </action>
+      <action>
+        <libid>1</libid>
+        <id>603</id>
+        <kind>7</kind>
+        <userelative>0</userelative>
+        <isquestion>0</isquestion>
+        <useapplyto>-1</useapplyto>
+        <exetype>2</exetype>
+        <functionname></functionname>
+        <codestring></codestring>
+        <whoName>self</whoName>
+        <relative>0</relative>
+        <isnot>0</isnot>
+        <arguments>
+          <argument>
+            <kind>1</kind>
+            <string>/// Vykreslení obrysů všech surfaces
+
+   
+   
+        set_font(7,c_black,1,-1);
+        for (a = 0; a &lt; ds_list_size(surface_list); a++) // Proiterujeme list s povrchy
+            {
+               var x1=start_x[| a];
+               var y1=start_y[| a];
+               var x2=temp_x2[| a];
+               var y2=temp_y2[| a];
+               
+            if selected[| a]==1 &amp;&amp; oCursorMode.value==MOVE //pohybujeme
+            {
+             x1=start_x[| a]+dif_x;
+             y1=start_y[| a]+dif_y;
+             x2=temp_x2[| a]+dif_x;
+             y2=temp_y2[| a]+dif_y;
+            }
+               
+               
+               // obdélník přes surface
+               draw_set_alpha(0.4);
+               //draw_rectangle(x1,y1,x2,y2,0);
+               draw_set_alpha(0.7);
+               draw_rectangle(x1,y1,x2,y2,1);
+               draw_set_alpha(1);
+               draw_text(x1,y1, "My id in list is: "+string(a));
+               
+               // Pokud je povrch označený jako aktivní, vypíšeme to
+               if selected[| a]==1 {draw_text(x1,y1+20, "I am active");}
+               if baked[| a]==1 {draw_text(x1,y1+40, "I am baked");}
+           }
+    
+           
+           
+           /*
+                      if (!creating_surface) // kreslíme za předpokladu, že nevytváříme povrch
                {
+               
+               var x1=start_x[| a];
+               var y1=start_y[| a];
+               var x2=temp_x2[| a];
+               var y2=temp_y2[| a];
+               
+            if (clicked_index = a) &amp;&amp; oCursorMode.value==MOVE //pohybujeme
+            {
+             x1=start_x[| a]+dif_x;
+             y1=start_y[| a]+dif_y;
+             x2=temp_x2[| a]+dif_x;
+             y2=temp_y2[| a]+dif_y;
+            }
+               
                
                // Ukázkové vykreslení povrchu
                draw_set_alpha(0.4);
-               draw_rectangle(start_x[| a],start_y[| a],temp_x2[| a],temp_y2[| a],0);
+               draw_rectangle(x1,y1,x2,y2,0);
                draw_set_alpha(0.7);
-               draw_rectangle(start_x[| a],start_y[| a],temp_x2[| a],temp_y2[| a],1);
+               draw_rectangle(x1,y1,x2,y2,1);
                draw_set_alpha(1);
-               draw_text(start_x[| a],start_y[| a], "My id in list is: "+string(a));
+               draw_text(x1,y1, "My id in list is: "+string(a));
                
                // Pokud je povrch označený jako aktivní, vypíšeme to
-               if (clicked_index = a) {draw_text(start_x[| a],start_y[| a]+20, "I am active");}
+               if (clicked_index = a) {draw_text(x1,y1+20, "I am active");}
                }
-        surface_reset_target(); // Jako cíl kreslení nastavíme application_surface
+               
+</string>
+          </argument>
+        </arguments>
+      </action>
+    </event>
+    <event eventtype="10" enumb="66">
+      <action>
+        <libid>1</libid>
+        <id>603</id>
+        <kind>7</kind>
+        <userelative>0</userelative>
+        <isquestion>0</isquestion>
+        <useapplyto>-1</useapplyto>
+        <exetype>2</exetype>
+        <functionname></functionname>
+        <codestring></codestring>
+        <whoName>self</whoName>
+        <relative>0</relative>
+        <isnot>0</isnot>
+        <arguments>
+          <argument>
+            <kind>1</kind>
+            <string>///stav zapečení vybraných on/off
+
+
+   //clicked_index = -1;  // Nastavíme vybraný povrch na "nevybraný"
+   
+   //if (ds_list_size(surface_list) &gt; 0) // Je zbytečné kopírovat podmínku - for je cyklus s podmínkou na začátku, při size 0 se nic neprovede
+      
+
+      for (a = 0; a &lt; ds_list_size(surface_list); a++) // Iterujeme list povrchů
+            {
+                if selected[| a]==1  baked[| a]=!baked[| a]; //select - deselect
+            }           
+
         
-        draw_surface(surface_list[| a],0,0); // vykreslíme iterovaný povrch
-           }
-      }
+
+   
+   
 </string>
           </argument>
         </arguments>

@@ -6,19 +6,33 @@
   <NewExtensions/>
   <sounds name="sound"/>
   <sprites name="sprites"/>
-  <backgrounds name="background"/>
+  <backgrounds name="background">
+    <background>background\background0</background>
+  </backgrounds>
   <paths name="paths"/>
   <scripts name="scripts">
     <scripts name="LoF">
       <script>scripts\scrInitiseRoom.gml</script>
     </scripts>
+    <scripts name="TB">
+      <script>scripts\draw_ds_list.gml</script>
+      <script>scripts\set_font.gml</script>
+      <script>scripts\is_between.gml</script>
+    </scripts>
   </scripts>
   <objects name="objects">
+    <object>objects\oCursorMode</object>
     <object>objects\oController</object>
   </objects>
   <rooms name="rooms">
     <room>rooms\formMain</room>
   </rooms>
+  <constants number="4">
+    <constant name="SELECT">0</constant>
+    <constant name="ADD">1</constant>
+    <constant name="KILL">2</constant>
+    <constant name="MOVE">3</constant>
+  </constants>
   <help>
     <rtf>help.rtf</rtf>
   </help>
