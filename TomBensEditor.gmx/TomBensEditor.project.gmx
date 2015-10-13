@@ -13,7 +13,6 @@
   <scripts name="scripts">
     <scripts name="LoF">
       <script>scripts\scrInitiseRoom.gml</script>
-      <script>scripts\scrSortVal.gml</script>
     </scripts>
     <scripts name="TB">
       <script>scripts\draw_ds_list.gml</script>
