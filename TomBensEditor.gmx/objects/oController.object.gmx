@@ -224,6 +224,44 @@ if (oCursorMode.value==ADD) // Pokud tvoříme povrch
         </arguments>
       </action>
     </event>
+    <event eventtype="6" enumb="54">
+      <action>
+        <libid>1</libid>
+        <id>603</id>
+        <kind>7</kind>
+        <userelative>0</userelative>
+        <isquestion>0</isquestion>
+        <useapplyto>-1</useapplyto>
+        <exetype>2</exetype>
+        <functionname></functionname>
+        <codestring></codestring>
+        <whoName>self</whoName>
+        <relative>0</relative>
+        <isnot>0</isnot>
+        <arguments>
+          <argument>
+            <kind>1</kind>
+            <string>///depth - inc 
+
+if (oCursorMode.value = DEPTH) // Pakliže máme vybraný stav kursoru jako "kill"
+    {
+      var m = g_surface_under_mouse(); // Zjistíme zda a na který povrch se kliklo
+      show_debug_message('Kliknuto na povrch: '+string(m));
+     
+     if (m != -1) //pod myší nějaký povrch je
+      {
+       m = g_surface_exists(m); //pozice v gridu      
+       g[#_depth,m]++; // Zvýšíme hloubku
+      }       
+    }    
+      
+      
+      
+</string>
+          </argument>
+        </arguments>
+      </action>
+    </event>
     <event eventtype="6" enumb="53">
       <action>
         <libid>1</libid>
@@ -333,6 +371,42 @@ if (oCursorMode.value = KILL) // Pakliže máme vybraný stav kursoru jako "kill
     }
         
 
+</string>
+          </argument>
+        </arguments>
+      </action>
+      <action>
+        <libid>1</libid>
+        <id>603</id>
+        <kind>7</kind>
+        <userelative>0</userelative>
+        <isquestion>0</isquestion>
+        <useapplyto>-1</useapplyto>
+        <exetype>2</exetype>
+        <functionname></functionname>
+        <codestring></codestring>
+        <whoName>self</whoName>
+        <relative>0</relative>
+        <isnot>0</isnot>
+        <arguments>
+          <argument>
+            <kind>1</kind>
+            <string>///depth - dec  
+
+if (oCursorMode.value = DEPTH) // Pakliže máme vybraný stav kursoru jako "kill"
+    {
+      var m = g_surface_under_mouse(); // Zjistíme zda a na který povrch se kliklo
+      show_debug_message('Kliknuto na povrch: '+string(m));
+     
+     if (m != -1) //pod myší nějaký povrch je
+      {
+       m = g_surface_exists(m); //pozice v gridu      
+       g[#_depth,m]--; // Snížíme hloubku
+      }       
+    }    
+      
+      
+      
 </string>
           </argument>
         </arguments>
@@ -541,7 +615,9 @@ if (oCursorMode.value==ADD) &amp;&amp; (creating_surface==1) // Pokud tvoříme 
         
                //obsah kopíruje source pokud není zapečen
                if g[#_baked,i]==0 surface_copy_part(g[#_id,i],0,0,ssource,g[#_xs1,i],g[#_ys1,i],g[#_xs2,i]-g[#_xs1,i],g[#_ys2,i]-g[#_ys1,i]);
-        
+               
+               if (!g[#_selected,i]) {draw_rectangle(x1-1,y1-1,x2,y2,1);}
+               
                draw_surface(g[#_id,i],x1,y1); // vykreslíme iterovaný povrch
              }
            }
@@ -570,9 +646,10 @@ if (oCursorMode.value==ADD) &amp;&amp; (creating_surface==1) // Pokud tvoříme 
           <argument>
             <kind>1</kind>
             <string>/// Vykreslení obrysů všech surfaces
+ 
 
-   
-   
+// Ono to trochu ztrácí při depths smysl...
+  
  set_font(7,c_black,1,-1);
  for(i=0;i&lt;max_surfaces;i++) //opět všechny, aby obrysy a infa byly vždy nahoře, jinak to lze nacpat do kreslení samotných surfaces
   {
@@ -613,17 +690,20 @@ if (oCursorMode.value==ADD) &amp;&amp; (creating_surface==1) // Pokud tvoříme 
 
                
                
-               // obdélník přes surface
-               draw_set_alpha(0.4);
                //draw_rectangle(x1,y1,x2,y2,0);
-               draw_set_alpha(0.7);
-               draw_rectangle(x1,y1,x2,y2,1);
-               draw_set_alpha(1);
+              // draw_set_alpha(0.7);
+              // draw_rectangle(x1,y1,x2,y2,1);
+              // draw_set_alpha(1);
+              
+              // Pokud je povrch vybraný, pushneme vykreslení okraje
+              if (g[#_selected,i]) {clr(c_purple); draw_rectangle(x1,y1,x2,y2,1); draw_rectangle(x1+1,y1+1,x2-1,y2-1,1); clr();}
+               
                draw_text(x1,y1, "ID: "+string(g[#_id,i]));
+               draw_text(x1,y1+20, "Depth: "+string(g[#_depth,i]));
                
                // Pokud je povrch označený jako aktivní, vypíšeme to
-               if g[#_selected,i]==1 {draw_text(x1,y1+20, "active");}
-               if g[#_baked,i]==1 {draw_text(x1,y1+40, "baked");}
+               if g[#_selected,i]==1 {draw_text(x1,y1+40, "active");}
+               if g[#_baked,i]==1 {draw_text(x1,y1+60, "baked");}
            }
      }
  }

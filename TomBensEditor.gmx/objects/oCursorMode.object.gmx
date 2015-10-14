@@ -61,14 +61,14 @@ case ADD: mode_string='ADD'; break;
 case SELECT: mode_string='SELECT'; break; 
 case MOVE: mode_string='MOVE'; break;
 case KILL: mode_string='KILL'; break;
-
+case DEPTH: mode_string='DEPTH'; break;
 
 default: mode_string=''; break; 
 }
 
-if keyboard_check_direct(vk_f1) mode_string='Add Select Move Kill';
+if keyboard_check_direct(vk_f1) mode_string='Add Select Move Kill Depth';
 
-draw_text(10,10,'Cursor Mode: '+mode_string);
+draw_text(10,30,'Cursor Mode: '+mode_string+string("#Press D to change depth, LMB to dec, RMB to inc.#Also try to select some, to see override effect."));
 </string>
           </argument>
         </arguments>
@@ -118,7 +118,7 @@ case 'S': value=SELECT; break;
 case 'C': value=ADD; break;
 case 'M': value=MOVE; break;
 case 'K': value=KILL; break;
-
+case 'D': value=DEPTH; break;
 
  
 
