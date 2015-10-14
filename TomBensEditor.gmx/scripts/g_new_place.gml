@@ -4,12 +4,12 @@
 
 for(i=0;i<max_surfaces;i++)
 {
-if g[#i,_id]==0 return(i); 
+if g[#_id,i]==0 return(i); 
 }
 
 //místo nenalezeno - resize grid
 max_surfaces++;
-ds_grid_resize(g,max_surfaces,grid_arguments);
+ds_grid_resize(g,grid_arguments,max_surfaces);
 return(max_surfaces-1);
 
 

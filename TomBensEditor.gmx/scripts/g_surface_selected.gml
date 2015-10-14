@@ -5,7 +5,7 @@
 var return_value=0;
 var temp=g_surface_exists(argument0);
 
-if temp<0 return(return_value) else return(g[#temp,_selected]);
+if temp<0 return(return_value) else return(g[#_selected,temp]);
 
 
 

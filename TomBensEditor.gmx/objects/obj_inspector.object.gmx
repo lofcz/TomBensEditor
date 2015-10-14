@@ -233,6 +233,11 @@ ribbon_color[i]=c_ltgray;
 ribbon_alpha[i]=flap_alpha;
 
 i++;
+ribbon_caption[i]='mouse:';
+ribbon_color[i]=c_ltgray;
+ribbon_alpha[i]=flap_alpha;
+
+i++;
 ribbon_caption[i]='surface position: ';
 ribbon_color[i]=c_ltgray;
 ribbon_alpha[i]=flap_alpha;
@@ -264,6 +269,35 @@ ribbon_caption[i]='y2: ';
 ribbon_color[i]=c_ltgray;
 ribbon_alpha[i]=flap_alpha;
 
+i++;
+ribbon_caption[i]='selected: ';
+ribbon_color[i]=c_ltgray;
+ribbon_alpha[i]=flap_alpha;
+
+i++;
+ribbon_caption[i]='baked: ';
+ribbon_color[i]=c_ltgray;
+ribbon_alpha[i]=flap_alpha;
+
+i++;
+ribbon_caption[i]='xs1: ';
+ribbon_color[i]=c_ltgray;
+ribbon_alpha[i]=flap_alpha;
+
+i++;
+ribbon_caption[i]='ys1: ';
+ribbon_color[i]=c_ltgray;
+ribbon_alpha[i]=flap_alpha;
+
+i++;
+ribbon_caption[i]='xs2: ';
+ribbon_color[i]=c_ltgray;
+ribbon_alpha[i]=flap_alpha;
+
+i++;
+ribbon_caption[i]='ys2: ';
+ribbon_color[i]=c_ltgray;
+ribbon_alpha[i]=flap_alpha;
 
 
 ribbons=i;
@@ -596,28 +630,56 @@ i++; //source_mode
 v[i]=string(subject.source_mode);
 v[i]=string_copy(v[i],0,mtl);
 
+i++; //source_mode
+v[i]=string(mouse_x)+','+string(mouse_y);
+v[i]=string_copy(v[i],0,mtl);
+
 i++; //surface position in grid
 v[i]=string(ss);
 v[i]=string_copy(v[i],0,mtl);
 
 i++; //surface ID
-v[i]=string(subject.g[#ss,_id]);
+v[i]=string(subject.g[#_id,ss]);
 v[i]=string_copy(v[i],0,mtl);
 
 i++; //x1
-v[i]=string(subject.g[#ss,_x1]);
+v[i]=string(subject.g[#_x1,ss]);
 v[i]=string_copy(v[i],0,mtl);
 
 i++; //y1
-v[i]=string(subject.g[#ss,_y1]);
+v[i]=string(subject.g[#_y1,ss]);
 v[i]=string_copy(v[i],0,mtl);
 
 i++; //x2
-v[i]=string(subject.g[#ss,_x2]);
+v[i]=string(subject.g[#_x2,ss]);
 v[i]=string_copy(v[i],0,mtl);
 
 i++; //y2
-v[i]=string(subject.g[#ss,_y2]);
+v[i]=string(subject.g[#_y2,ss]);
+v[i]=string_copy(v[i],0,mtl);
+
+i++; //selected
+v[i]=string(subject.g[#_selected,ss]);
+v[i]=string_copy(v[i],0,mtl);
+
+i++; //baked
+v[i]=string(subject.g[#_baked,ss]);
+v[i]=string_copy(v[i],0,mtl);
+
+i++; //xs1
+v[i]=string(subject.g[#_xs1,ss]);
+v[i]=string_copy(v[i],0,mtl);
+
+i++; //ys1
+v[i]=string(subject.g[#_ys1,ss]);
+v[i]=string_copy(v[i],0,mtl);
+
+i++; //xs2
+v[i]=string(subject.g[#_xs2,ss]);
+v[i]=string_copy(v[i],0,mtl);
+
+i++; //ys2
+v[i]=string(subject.g[#_ys2,ss]);
 v[i]=string_copy(v[i],0,mtl);
 
 

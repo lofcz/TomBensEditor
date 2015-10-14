@@ -32,7 +32,7 @@ grid_arguments=16;
 
 //LIST ARGUMENTŮ V MAKRECH
 
-g=ds_grid_create(max_surfaces,grid_arguments);
+g=ds_grid_create(grid_arguments,max_surfaces);
 
 
 </string>
@@ -62,7 +62,7 @@ clicked          = 0; // Kontrola, zda bylo tento step kliknuto myší (bool)
 creating_surface = 0; // Zda vytvářime surface (bool)
 clicked_index    = -1; // Index vybraného povrchu, -1 značí žádný povrch (int32)
 moving           = 0; // Zda je tažen (bool)
-source_mode      = 0; // režim manipulace se zdrojem obsahu
+source_mode      = 0; // režim manipulace se zdrojem obsahu ( 0 ukazuje výsledek, 1 zdroj obsahu )
 layer            = 0; // aktuální hloubka pro nové surfaces - čím vyšší, tím je hlouběji
 group            = -1; // aktuální group pro nové surfaces: -1 znamená bez group
 
@@ -135,6 +135,25 @@ dif_y= mouse_y - start_yy  ;  // Y-ová souřadnice
 
     if (oCursorMode.value==MOVE) // Pokud není vybraný žádný povrch a kliklo se, vytváříme nový povrch
     {
+    
+    for(i=0;i&lt;max_surfaces;i++) //pro všechny povrchy
+    {
+     if g[#_selected,i]==1 //které jsou vybrány
+       {
+        //položit
+        if source_mode==0
+        {
+        g[#_x1,i]+=dif_x;        g[#_y1,i]+=dif_y;
+        g[#_x2,i]+=dif_x;        g[#_y2,i]+=dif_y;
+        }
+        else
+        {
+        g[#_xs1,i]+=dif_x;        g[#_ys1,i]+=dif_y;
+        g[#_xs2,i]+=dif_x;        g[#_ys2,i]+=dif_y;
+        }
+       }
+    }
+    
     moving = 0; // Posunujeme povrch
     }
 
@@ -169,29 +188,29 @@ if (oCursorMode.value==ADD) // Pokud tvoříme povrch
        {   
         var position_in_grid=g_new_place();   
         
-        g[#position_in_grid,_id]=surface_create(surface_x,surface_y); // Do listu uložíme nový povrch
+        g[#_id,position_in_grid]=surface_create(surface_x,surface_y); // Do listu uložíme nový povrch
         
-        if surface_exists(g[#position_in_grid,_id]) 
-              show_debug_message('New surface was created: '+string(g[#position_in_grid,_id])+' at '+string(position_in_grid))
+        if surface_exists(g[#_id,position_in_grid]) 
+              show_debug_message('New surface was created: '+string(g[#_id,position_in_grid])+' at '+string(position_in_grid))
          else show_debug_message('New surface was NOT created! ');
         
         // Do adekvátních sloupců gridu zapíšeme souřadnice x1,y1,x2,y2   
-        g[#position_in_grid,_x2]=max(mouse_x,start_xx); 
-        g[#position_in_grid,_y2]=max(mouse_y,start_yy);       
-        g[#position_in_grid,_x1]=min(mouse_x,start_xx);
-        g[#position_in_grid,_y1]=min(mouse_y,start_yy);
+        g[#_x2,position_in_grid]=max(mouse_x,start_xx); 
+        g[#_y2,position_in_grid]=max(mouse_y,start_yy);       
+        g[#_x1,position_in_grid]=min(mouse_x,start_xx);
+        g[#_y1,position_in_grid]=min(mouse_y,start_yy);
         
         //default pro flags
-        g[#position_in_grid,_baked]=0;
-        g[#position_in_grid,_selected]=0;
-        g[#position_in_grid,_depth]=layer;
-        g[#position_in_grid,_group]=group;
+        g[#_baked,position_in_grid]=0;
+        g[#_selected,position_in_grid]=0;
+        g[#_depth,position_in_grid]=layer;
+        g[#_group,position_in_grid]=group;
         
         //source je na začátku tam, kde poloha
-        g[#position_in_grid,_xs2]=g[#position_in_grid,_x2]; 
-        g[#position_in_grid,_ys2]=g[#position_in_grid,_y2];       
-        g[#position_in_grid,_xs1]=g[#position_in_grid,_x1];
-        g[#position_in_grid,_ys1]=g[#position_in_grid,_y1];
+        g[#_xs2,position_in_grid]=g[#_x2,position_in_grid]; 
+        g[#_ys2,position_in_grid]=g[#_y2,position_in_grid];       
+        g[#_xs1,position_in_grid]=g[#_x1,position_in_grid];
+        g[#_ys1,position_in_grid]=g[#_y1,position_in_grid];
         
        }
        
@@ -222,7 +241,7 @@ if (oCursorMode.value==ADD) // Pokud tvoříme povrch
         <arguments>
           <argument>
             <kind>1</kind>
-            <string>///výběr a zničení
+            <string>///výběr  
 
 
    //clicked_index = -1;  // Nastavíme vybraný povrch na "nevybraný"
@@ -231,40 +250,56 @@ if (oCursorMode.value==ADD) // Pokud tvoříme povrch
       
    if oCursorMode.value==SELECT
    {
-      for (a = 0; a &lt; ds_list_size(surface_list); a++) // Iterujeme list povrchů
-            {
-            //if (mouse_x &gt; start_x[| a] &amp;&amp; mouse_x &lt; temp_x2[| a] &amp;&amp; mouse_y &gt; start_y[| a] &amp;&amp; mouse_y &lt; temp_y2[| a]) // Pokud je myš v čtverci representující iterovaný povrch   
-            if point_in_rectangle(mouse_x,mouse_y,start_x[| a],start_y[| a],temp_x2[| a],temp_y2[| a])
-               {
-                selected[| a]=!selected[| a]; //select - deselect
-                break; // Dál už iterovat nepotřebujeme
-               }      
-            }           
-    }    
+     var m=g_surface_under_mouse();
+     show_debug_message('Kliknuto na povrch: '+string(m));
+     if m!=-1 //pod myší nějaký povrch je
+      {
+       m=g_surface_exists(m); //pozice v gridu
+       g[#_selected,m]=!g[#_selected,m]; //select/deselect
+      }                   
+   }    
     
-    if (oCursorMode.value = KILL) // Pakliže máme vybraný stav kursoru jako "kill"
-       {
-       for (a = 0; a &lt; ds_list_size(surface_list); a++) // Iterujeme list povrchů
-            {
-           if point_in_rectangle(mouse_x,mouse_y,start_x[| a],start_y[| a],temp_x2[| a],temp_y2[| a]) // Pokud máme kursor na povrchu
-               {
-                // Ze všech potřebných seznamů odebereme adekvátní položku, už aby se to sjednotilo do ds_grid, tohle je na zbláznění 
-                ds_list_delete(surface_list,a);
-                ds_list_delete(start_x,a);
-                ds_list_delete(start_y,a);
-                ds_list_delete(temp_x2,a);
-                ds_list_delete(temp_y2,a);
-                ds_list_delete(selected,a);
-                ds_list_delete(baked,a);
-                
-                break; // Ukončíme cykl
-               }      
-            }           
-      }    
+
         
 
    
    
+</string>
+          </argument>
+        </arguments>
+      </action>
+      <action>
+        <libid>1</libid>
+        <id>603</id>
+        <kind>7</kind>
+        <userelative>0</userelative>
+        <isquestion>0</isquestion>
+        <useapplyto>-1</useapplyto>
+        <exetype>2</exetype>
+        <functionname></functionname>
+        <codestring></codestring>
+        <whoName>self</whoName>
+        <relative>0</relative>
+        <isnot>0</isnot>
+        <arguments>
+          <argument>
+            <kind>1</kind>
+            <string>///zničení   
+if (oCursorMode.value = KILL) // Pakliže máme vybraný stav kursoru jako "kill"
+    {
+      var m=g_surface_under_mouse();
+      show_debug_message('Kliknuto na povrch: '+string(m));
+     
+     if m!=-1 //pod myší nějaký povrch je
+      {
+       m=g_surface_exists(m); //pozice v gridu
+       surface_free(g[#_id,m]);
+       ds_grid_set_region(g,0,m,grid_arguments-1,m,0); //reset values
+      }       
+    }    
+      
+      
+      
 </string>
           </argument>
         </arguments>
@@ -455,48 +490,47 @@ if (oCursorMode.value==ADD) &amp;&amp; (creating_surface==1) // Pokud tvoříme 
 
    
        //první by se měly vykreslit ty s nejnižší depth, stejné depth pak podle pořadí vytvoření
-       //ds_grid_sort(g,_id,sestupne); 
-       //ds_grid_sort(g,_depth,sestupne);
+       ds_grid_sort(g,_id,sestupne); 
+       ds_grid_sort(g,_depth,sestupne);
        
    for(i=0;i&lt;max_surfaces;i++)
     {
           
-     if g[#i,_id]!=0  //nulový index je rezervován pro ssource a nula v grid znamená prázdné pole
+     if g[#_id,i]!=0  //nulový index je rezervován pro ssource a nula v grid znamená prázdné pole
           {
              var x1,y1,x2,y2;
                
                if source_mode==0
                {
-                x1=g[#i,_x1];
-                y1=g[#i,_y1];
-                x2=g[#i,_x2];
-                y2=g[#i,_y2];
+                x1=g[#_x1,i];
+                y1=g[#_y1,i];
+                x2=g[#_x2,i];
+                y2=g[#_y2,i];
                }
                
-          //pokud surface neexistuje, vytvoří se podle záznamu
-          /*
-            if !surface_exists(g[#i,_id])
+          //pokud surface neexistuje, ale záznam je, vytvoří se podle záznamu
+            if !surface_exists(g[#_id,i])
               {
                var w=x2-x1;
                var h=y2-y1;
                
-               if w&gt;0 &amp;&amp; h&gt;0 g[#i,_id]=surface_create(w,h);                  
+               if w&gt;0 &amp;&amp; h&gt;0 g[#_id,i]=surface_create(w,h);                  
               }
-              */
               
-             if surface_exists(g[#i,_id]) //pokud přesto neexistuje, nekreslí se nic
+              
+             if surface_exists(g[#_id,i]) //pokud surface neexistuje, nekreslí se nic
              {
                if source_mode==1
                {
-                x1=g[#i,_xs1];
-                y1=g[#i,_ys1];
-                x2=g[#i,_xs2];
-                y2=g[#i,_ys2];
+                x1=g[#_xs1,i];
+                y1=g[#_ys1,i];
+                x2=g[#_xs2,i];
+                y2=g[#_ys2,i];
                }
                     
   
                
-               if g[#i,_selected]=1 &amp;&amp; oCursorMode.value==MOVE //pohybujeme
+               if g[#_selected,i]=1 &amp;&amp; moving==1 //pohybujeme
                {
                 x1+=dif_x;
                 y1+=dif_y;
@@ -506,9 +540,9 @@ if (oCursorMode.value==ADD) &amp;&amp; (creating_surface==1) // Pokud tvoříme 
 
         
                //obsah kopíruje source pokud není zapečen
-               if g[#i,_baked]==0 surface_copy_part(g[#i,_id],0,0,ssource,g[#i,_xs1],g[#i,_ys1],g[#i,_xs2]-g[#i,_xs1],g[#i,_ys2]-g[#i,_ys1]);
+               if g[#_baked,i]==0 surface_copy_part(g[#_id,i],0,0,ssource,g[#_xs1,i],g[#_ys1,i],g[#_xs2,i]-g[#_xs1,i],g[#_ys2,i]-g[#_ys1,i]);
         
-               draw_surface(g[#i,_id],x1,y1); // vykreslíme iterovaný povrch
+               draw_surface(g[#_id,i],x1,y1); // vykreslíme iterovaný povrch
              }
            }
       }    
@@ -542,34 +576,41 @@ if (oCursorMode.value==ADD) &amp;&amp; (creating_surface==1) // Pokud tvoříme 
  set_font(7,c_black,1,-1);
  for(i=0;i&lt;max_surfaces;i++) //opět všechny, aby obrysy a infa byly vždy nahoře, jinak to lze nacpat do kreslení samotných surfaces
   {
-     if g[#i,_id]==0 break; //nulový index je rezervován pro ssource a nula v grid znamená prázdné pole
-      else
-          {        
+      if g[#_id,i]!=0  //nulový index je rezervován pro ssource a nula v grid znamená prázdné pole
+          {
+          
+          if surface_exists(g[#_id,i]) //pokud surface neexistuje, nekreslí se nic
+             {
              var x1,y1,x2,y2;
                
                if source_mode==0
                {
-                x1=g[#i,_x1];
-                y1=g[#i,_y1];
-                x2=g[#i,_x2];
-                y2=g[#i,_y2];
+                x1=g[#_x1,i];
+                y1=g[#_y1,i];
+                x2=g[#_x2,i];
+                y2=g[#_y2,i];
                }
-               else
+        
+              
+             
+               if source_mode==1
                {
-                x1=g[#i,_xs1];
-                y1=g[#i,_ys1];
-                x2=g[#i,_xs2];
-                y2=g[#i,_ys2];
+                x1=g[#_xs1,i];
+                y1=g[#_ys1,i];
+                x2=g[#_xs2,i];
+                y2=g[#_ys2,i];
                }
+                    
+  
                
-               
-            if g[#i,_selected]=1 &amp;&amp; oCursorMode.value==MOVE //pohybujeme
-            {
-             x1+=dif_x;
-             y1+=dif_y;
-             x2+=dif_x;
-             y2+=dif_y;
-            }
+               if g[#_selected,i]=1 &amp;&amp; moving=1 //pohybujeme
+               {
+                x1+=dif_x;
+                y1+=dif_y;
+                x2+=dif_x;
+                y2+=dif_y;
+               }
+
                
                
                // obdélník přes surface
@@ -578,14 +619,40 @@ if (oCursorMode.value==ADD) &amp;&amp; (creating_surface==1) // Pokud tvoříme 
                draw_set_alpha(0.7);
                draw_rectangle(x1,y1,x2,y2,1);
                draw_set_alpha(1);
-               draw_text(x1,y1, "ID: "+string(i));
+               draw_text(x1,y1, "ID: "+string(g[#_id,i]));
                
                // Pokud je povrch označený jako aktivní, vypíšeme to
-               if g[#i,_selected]==1 {draw_text(x1,y1+20, "active");}
-               if g[#i,_baked]==1 {draw_text(x1,y1+40, "baked");}
+               if g[#_selected,i]==1 {draw_text(x1,y1+20, "active");}
+               if g[#_baked,i]==1 {draw_text(x1,y1+40, "baked");}
            }
      }
-           
+ }
+      
+
+</string>
+          </argument>
+        </arguments>
+      </action>
+    </event>
+    <event eventtype="10" enumb="106">
+      <action>
+        <libid>1</libid>
+        <id>603</id>
+        <kind>7</kind>
+        <userelative>0</userelative>
+        <isquestion>0</isquestion>
+        <useapplyto>-1</useapplyto>
+        <exetype>2</exetype>
+        <functionname></functionname>
+        <codestring></codestring>
+        <whoName>self</whoName>
+        <relative>0</relative>
+        <isnot>0</isnot>
+        <arguments>
+          <argument>
+            <kind>1</kind>
+            <string>///přepíná  úpravu zdroje a cíle
+source_mode=!source_mode;
 
 </string>
           </argument>
@@ -612,18 +679,58 @@ if (oCursorMode.value==ADD) &amp;&amp; (creating_surface==1) // Pokud tvoříme 
             <string>///stav zapečení vybraných on/off
 
 
-   //clicked_index = -1;  // Nastavíme vybraný povrch na "nevybraný"
+   for(i=0;i&lt;max_surfaces;i++) //pro všechny povrchy
+   {
+    if g[#_selected,i]==1 //které jsou vybrány
+      g[#_baked,i]=!g[#_baked,i]; //zapečení on/off   
+   }
    
-   //if (ds_list_size(surface_list) &gt; 0) // Je zbytečné kopírovat podmínku - for je cyklus s podmínkou na začátku, při size 0 se nic neprovede
-      
+   
+   
+</string>
+          </argument>
+        </arguments>
+      </action>
+    </event>
+    <event eventtype="10" enumb="36">
+      <action>
+        <libid>1</libid>
+        <id>603</id>
+        <kind>7</kind>
+        <userelative>0</userelative>
+        <isquestion>0</isquestion>
+        <useapplyto>-1</useapplyto>
+        <exetype>2</exetype>
+        <functionname></functionname>
+        <codestring></codestring>
+        <whoName>self</whoName>
+        <relative>0</relative>
+        <isnot>0</isnot>
+        <arguments>
+          <argument>
+            <kind>1</kind>
+            <string>///synchronizuje zdroj obsahu s aktuální polohou povrchu a v source_mode polohu povrchu s polohou zdroje obsahu
 
-      for (a = 0; a &lt; ds_list_size(surface_list); a++) // Iterujeme list povrchů
-            {
-                if selected[| a]==1  baked[| a]=!baked[| a]; //select - deselect
-            }           
-
-        
-
+   for(i=0;i&lt;max_surfaces;i++) //pro všechny povrchy
+   {
+    if g[#_selected,i]==1 //které jsou vybrány
+    {
+    if source_mode!=0
+     {
+      g[#_x1,i]=g[#_xs1,i]; //sync target
+      g[#_y1,i]=g[#_ys1,i];  
+      g[#_x2,i]=g[#_xs2,i]; 
+      g[#_y2,i]=g[#_ys2,i];
+     }
+      else
+     {
+      g[#_xs1,i]=g[#_x1,i]; //sync source
+      g[#_ys1,i]=g[#_y1,i];  
+      g[#_xs2,i]=g[#_x2,i]; 
+      g[#_ys2,i]=g[#_y2,i];
+     }  
+    }  
+   }
    
    
 </string>
