@@ -25,25 +25,44 @@
         <arguments>
           <argument>
             <kind>1</kind>
-            <string>/// Inicializace
+            <string>///grid init
+
+max_surfaces=10;    //pro rychlejší ladění ( později přidat nebo dynamicky zvětšovat pomocí resize )
+grid_arguments=10;
+
+//LIST ARGUMENTŮ V MAKRECH
+
+g=ds_grid_create(max_surfaces,grid_arguments);
 
 
-// Jednotlivé listy pro parametry 
-surface_list     = ds_list_create(); // Seznam povrchů 
-start_x          = ds_list_create(); // x1
-start_y          = ds_list_create(); // y1
-temp_x2          = ds_list_create(); // x2
-temp_y2          = ds_list_create(); // y2
-selected         = ds_list_create(); // vybráno (bool)
-baked            = ds_list_create(); // zapečení obsahu
-
-
+</string>
+          </argument>
+        </arguments>
+      </action>
+      <action>
+        <libid>1</libid>
+        <id>603</id>
+        <kind>7</kind>
+        <userelative>0</userelative>
+        <isquestion>0</isquestion>
+        <useapplyto>-1</useapplyto>
+        <exetype>2</exetype>
+        <functionname></functionname>
+        <codestring></codestring>
+        <whoName>self</whoName>
+        <relative>0</relative>
+        <isnot>0</isnot>
+        <arguments>
+          <argument>
+            <kind>1</kind>
+            <string>/// Inicializace ostatních proměnných
 
 // Proměnné pro práci se selekcí a vytváření povrchů
 clicked          = 0; // Kontrola, zda bylo tento step kliknuto myší (bool)
 creating_surface = 0; // Zda vytvářime surface (bool)
 clicked_index    = -1; // Index vybraného povrchu, -1 značí žádný povrch (int32)
 moving           = 0; // Zda je tažen (bool)
+source_mode      = 0; // režim manipulace se zdrojem obsahu
 
 
 //průběžné
@@ -54,6 +73,19 @@ dif_y=0;       // rozdílová Y
 
 //jeden surface jako zdroj obsahu - vytvoření v Draw
 ssource=-1
+
+
+//--------------------------------------------------- smazat
+// Jednotlivé listy pro parametry
+/*
+surface_list     = ds_list_create(); // Seznam povrchů 
+start_x          = ds_list_create(); // x1
+start_y          = ds_list_create(); // y1
+temp_x2          = ds_list_create(); // x2
+temp_y2          = ds_list_create(); // y2
+selected         = ds_list_create(); // vybráno (bool)
+baked            = ds_list_create(); // zapečení obsahu
+*/
 
 </string>
           </argument>

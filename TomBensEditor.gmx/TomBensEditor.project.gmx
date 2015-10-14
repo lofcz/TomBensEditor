@@ -19,6 +19,10 @@
       <script>scripts\set_font.gml</script>
       <script>scripts\is_between.gml</script>
     </scripts>
+    <scripts name="ManipulateGrid">
+      <script>scripts\g_surface_exists.gml</script>
+      <script>scripts\g_surface_under_mouse.gml</script>
+    </scripts>
   </scripts>
   <objects name="objects">
     <object>objects\oCursorMode</object>
@@ -27,11 +31,26 @@
   <rooms name="rooms">
     <room>rooms\formMain</room>
   </rooms>
-  <constants number="4">
+  <constants number="19">
     <constant name="SELECT">0</constant>
     <constant name="ADD">1</constant>
     <constant name="KILL">2</constant>
     <constant name="MOVE">3</constant>
+    <constant name="vzestupne">true</constant>
+    <constant name="sestupne">false</constant>
+    <constant name="_id">0</constant>
+    <constant name="_x1">1</constant>
+    <constant name="_y1">2</constant>
+    <constant name="_x2">3</constant>
+    <constant name="_y2">4</constant>
+    <constant name="_selected">5</constant>
+    <constant name="_baked">6</constant>
+    <constant name="_xs1">7</constant>
+    <constant name="_ys1">8</constant>
+    <constant name="_xs2">9</constant>
+    <constant name="_ys2">10</constant>
+    <constant name="_depth">11</constant>
+    <constant name="_group">12</constant>
   </constants>
   <help>
     <rtf>help.rtf</rtf>
