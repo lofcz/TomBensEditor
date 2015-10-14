@@ -3,9 +3,9 @@
 //funkce vrací x souřadnici v grid, pokud index existuje, jinak -1
 
 var return_value=-1;
-for(i=0;i<max_arguments;i++)
+for(i=0;i<max_surfaces;i++)
 {
-if ds_grid_get(g,i,_id)==argument0 return_value=i; break;
+if g[#i,_id]==argument0 return_value=i; break;
 }
 return(return_value);
 

@@ -15,18 +15,20 @@
       <script>scripts\scrInitiseRoom.gml</script>
     </scripts>
     <scripts name="TB">
-      <script>scripts\draw_ds_list.gml</script>
       <script>scripts\set_font.gml</script>
       <script>scripts\is_between.gml</script>
     </scripts>
     <scripts name="ManipulateGrid">
       <script>scripts\g_surface_exists.gml</script>
+      <script>scripts\g_new_place.gml</script>
+      <script>scripts\g_surface_selected.gml</script>
       <script>scripts\g_surface_under_mouse.gml</script>
     </scripts>
   </scripts>
   <objects name="objects">
     <object>objects\oCursorMode</object>
     <object>objects\oController</object>
+    <object>objects\obj_inspector</object>
   </objects>
   <rooms name="rooms">
     <room>rooms\formMain</room>
