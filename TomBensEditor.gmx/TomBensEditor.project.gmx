@@ -34,12 +34,13 @@
   <rooms name="rooms">
     <room>rooms\formMain</room>
   </rooms>
-  <constants number="20">
+  <constants number="21">
     <constant name="SELECT">0</constant>
     <constant name="ADD">1</constant>
     <constant name="KILL">2</constant>
     <constant name="MOVE">3</constant>
     <constant name="DEPTH">4</constant>
+    <constant name="RESIZE">5</constant>
     <constant name="vzestupne">true</constant>
     <constant name="sestupne">false</constant>
     <constant name="_id">0</constant>

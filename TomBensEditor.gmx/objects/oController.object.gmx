@@ -62,6 +62,7 @@ clicked          = 0; // Kontrola, zda bylo tento step kliknuto myší (bool)
 creating_surface = 0; // Zda vytvářime surface (bool)
 clicked_index    = -1; // Index vybraného povrchu, -1 značí žádný povrch (int32)
 moving           = 0; // Zda je tažen (bool)
+resizing         = 0; // Zda je měněna velikost (bool)
 source_mode      = 0; // režim manipulace se zdrojem obsahu ( 0 ukazuje výsledek, 1 zdroj obsahu )
 layer            = 0; // aktuální hloubka pro nové surfaces - čím vyšší, tím je hlouběji
 group            = -1; // aktuální group pro nové surfaces: -1 znamená bez group
@@ -100,9 +101,9 @@ ssource=surface_create(room_width,room_height); // je nutné vytvořit alespoň 
         <arguments>
           <argument>
             <kind>1</kind>
-            <string>///Přemisťování surface
+            <string>///Přemisťování nebo změna velikosti surface
 
-if moving==1
+if moving==1 || resizing==1
 {
 dif_x= mouse_x - start_xx  ;  // X-ová souřadnice
 dif_y= mouse_y - start_yy  ;  // Y-ová souřadnice
@@ -155,6 +156,56 @@ dif_y= mouse_y - start_yy  ;  // Y-ová souřadnice
     }
     
     moving = 0; // Posunujeme povrch
+    }
+
+</string>
+          </argument>
+        </arguments>
+      </action>
+      <action>
+        <libid>1</libid>
+        <id>603</id>
+        <kind>7</kind>
+        <userelative>0</userelative>
+        <isquestion>0</isquestion>
+        <useapplyto>-1</useapplyto>
+        <exetype>2</exetype>
+        <functionname></functionname>
+        <codestring></codestring>
+        <whoName>self</whoName>
+        <relative>0</relative>
+        <isnot>0</isnot>
+        <arguments>
+          <argument>
+            <kind>1</kind>
+            <string>///resizing - zastavení
+
+    if (oCursorMode.value==RESIZE) // mód kurzoru je RESIZE
+    {
+    
+    for(i=0;i&lt;max_surfaces;i++) //pro všechny povrchy
+    {
+     if g[#_selected,i]==1 //které jsou vybrány
+       {
+        //resize surface i zdroje ( nezamčený aspect )
+        g[#_x1,i]-=dif_x;
+        g[#_y1,i]-=dif_y;
+        g[#_x2,i]+=dif_x;
+        g[#_y2,i]+=dif_y;
+        
+        g[#_xs1,i]-=dif_x;
+        g[#_ys1,i]-=dif_y;
+        g[#_xs2,i]+=dif_x;
+        g[#_ys2,i]+=dif_y;
+        
+        //pokud není starý surface zrovna zneplatněn, zlikviduj ho
+        if surface_exists (g[#_id,i]) surface_free(g[#_id,i]);
+        //vytvoř nový s novou velikostí
+        g[#_id,i]=surface_create(g[#_x2,i]-g[#_x1,i],g[#_y2,i]-g[#_y1,i]);
+       }
+    }
+    
+    resizing = 0; // Posunujeme povrch
     }
 
 </string>
@@ -261,6 +312,38 @@ if (oCursorMode.value = DEPTH) // Pakliže máme vybraný stav kursoru jako "kil
           </argument>
         </arguments>
       </action>
+      <action>
+        <libid>1</libid>
+        <id>603</id>
+        <kind>7</kind>
+        <userelative>0</userelative>
+        <isquestion>0</isquestion>
+        <useapplyto>-1</useapplyto>
+        <exetype>2</exetype>
+        <functionname></functionname>
+        <codestring></codestring>
+        <whoName>self</whoName>
+        <relative>0</relative>
+        <isnot>0</isnot>
+        <arguments>
+          <argument>
+            <kind>1</kind>
+            <string>///výběr - deselect all
+
+    if (oCursorMode.value==SELECT) // mód kurzoru je SELECT
+    {
+    
+    for(i=0;i&lt;max_surfaces;i++) //pro všechny povrchy
+    {
+     g[#_selected,i]=0 //deselect
+    }
+
+    }
+
+</string>
+          </argument>
+        </arguments>
+      </action>
     </event>
     <event eventtype="6" enumb="53">
       <action>
@@ -281,11 +364,6 @@ if (oCursorMode.value = DEPTH) // Pakliže máme vybraný stav kursoru jako "kil
             <kind>1</kind>
             <string>///výběr  
 
-
-   //clicked_index = -1;  // Nastavíme vybraný povrch na "nevybraný"
-   
-   //if (ds_list_size(surface_list) &gt; 0) // Je zbytečné kopírovat podmínku - for je cyklus s podmínkou na začátku, při size 0 se nic neprovede - DÍKY
-      
    if oCursorMode.value==SELECT
    {
      var m=g_surface_under_mouse();
@@ -363,6 +441,39 @@ if (oCursorMode.value = KILL) // Pakliže máme vybraný stav kursoru jako "kill
     if (oCursorMode.value==MOVE)&amp;&amp; moving==0 // Pokud není vybraný žádný povrch a kliklo se, vytváříme nový povrch
     {
     moving = 1; // Posunujeme povrchy
+   
+    // Do 2D vektoru si uložíme souřadnice kurzoru(x,y)
+    start_xx = mouse_x;  // X-ová souřadnice
+    start_yy = mouse_y;  // Y-ová souřadnice
+    
+    }
+        
+
+</string>
+          </argument>
+        </arguments>
+      </action>
+      <action>
+        <libid>1</libid>
+        <id>603</id>
+        <kind>7</kind>
+        <userelative>0</userelative>
+        <isquestion>0</isquestion>
+        <useapplyto>-1</useapplyto>
+        <exetype>2</exetype>
+        <functionname></functionname>
+        <codestring></codestring>
+        <whoName>self</whoName>
+        <relative>0</relative>
+        <isnot>0</isnot>
+        <arguments>
+          <argument>
+            <kind>1</kind>
+            <string>///start resize
+
+    if (oCursorMode.value==RESIZE)&amp;&amp; resizing==0 // Pokud není vybraný žádný povrch a kliklo se, vytváříme nový povrch
+    {
+    resizing = 1; // Posunujeme povrchy
    
     // Do 2D vektoru si uložíme souřadnice kurzoru(x,y)
     start_xx = mouse_x;  // X-ová souřadnice
@@ -540,6 +651,10 @@ if (oCursorMode.value==ADD) &amp;&amp; (creating_surface==1) // Pokud tvoříme 
     draw_rectangle(start_xx,start_yy,mouse_x,mouse_y,1); // Vykreslíme obdélník od počátečních k aktuálním souřadnicím kurzoru
    }
    
+   
+   
+
+   
 </string>
           </argument>
         </arguments>
@@ -611,14 +726,31 @@ if (oCursorMode.value==ADD) &amp;&amp; (creating_surface==1) // Pokud tvoříme 
                 x2+=dif_x;
                 y2+=dif_y;
                }
+  
+                
+  
+               if g[#_selected,i]=1 &amp;&amp; resizing==1 //měníme velikost - obrys
+               {
+                
+                draw_rectangle(x1-dif_x,y1-dif_y,x2+dif_x,y2+dif_y,1);
+                
+               }   
+               
+               
 
         
                //obsah kopíruje source pokud není zapečen
                if g[#_baked,i]==0 surface_copy_part(g[#_id,i],0,0,ssource,g[#_xs1,i],g[#_ys1,i],g[#_xs2,i]-g[#_xs1,i],g[#_ys2,i]-g[#_ys1,i]);
                
                if (!g[#_selected,i]) {draw_rectangle(x1-1,y1-1,x2,y2,1);}
-               
-               draw_surface(g[#_id,i],x1,y1); // vykreslíme iterovaný povrch
+              
+                // vykreslíme iterovaný povrch
+               if keyboard_check_direct(ord('H')) //dočasně skryje nevybrané
+               {
+                  if (g[#_selected,i]) draw_surface(g[#_id,i],x1,y1); 
+               }
+               else
+               { draw_surface(g[#_id,i],x1,y1); }
              }
            }
       }    
