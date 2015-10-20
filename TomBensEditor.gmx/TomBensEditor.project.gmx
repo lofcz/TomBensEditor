@@ -34,7 +34,7 @@
   <rooms name="rooms">
     <room>rooms\formMain</room>
   </rooms>
-  <constants number="22">
+  <constants number="24">
     <constant name="SELECT">0</constant>
     <constant name="ADD">1</constant>
     <constant name="KILL">2</constant>
@@ -57,6 +57,8 @@
     <constant name="_ys2">10</constant>
     <constant name="_depth">11</constant>
     <constant name="_group">12</constant>
+    <constant name="_xscale">13</constant>
+    <constant name="_yscale">14</constant>
   </constants>
   <help>
     <rtf>help.rtf</rtf>

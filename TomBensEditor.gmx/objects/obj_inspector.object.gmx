@@ -299,6 +299,16 @@ ribbon_caption[i]='ys2: ';
 ribbon_color[i]=c_ltgray;
 ribbon_alpha[i]=flap_alpha;
 
+i++;
+ribbon_caption[i]='xscale: ';
+ribbon_color[i]=c_ltgray;
+ribbon_alpha[i]=flap_alpha;
+
+i++;
+ribbon_caption[i]='yscale: ';
+ribbon_color[i]=c_ltgray;
+ribbon_alpha[i]=flap_alpha;
+
 
 ribbons=i;
 
@@ -682,6 +692,13 @@ i++; //ys2
 v[i]=string(subject.g[#_ys2,ss]);
 v[i]=string_copy(v[i],0,mtl);
 
+i++; //xscale
+v[i]=string(subject.g[#_xscale,ss]);
+v[i]=string_copy(v[i],0,mtl);
+
+i++; //yscale
+v[i]=string(subject.g[#_yscale,ss]);
+v[i]=string_copy(v[i],0,mtl);
 
 
 

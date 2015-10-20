@@ -178,7 +178,7 @@ dif_y= mouse_y - start_yy  ;  // Y-ová souřadnice
         <arguments>
           <argument>
             <kind>1</kind>
-            <string>///resizing - zastavení
+            <string>///resizing a scaling - položení tahu myši
 
     if (oCursorMode.value==RESIZE) || (oCursorMode.value==SCALE) // mód kurzoru je RESIZE nebo SCALE
     {
@@ -192,29 +192,45 @@ dif_y= mouse_y - start_yy  ;  // Y-ová souřadnice
         var Xkey=!keyboard_check_direct(ord('X'));
         var Ykey=!keyboard_check_direct(ord('Y'));
         
-        var xr1=g[#_x1,i]-(dif_x*Xkey);
-        var yr1=g[#_y1,i]-(dif_y*Ykey);
-        var xr2=g[#_x2,i]+(dif_x*Xkey);
-        var yr2=g[#_y2,i]+(dif_y*Ykey);
+        var ZoomSurface = (oCursorMode.value==RESIZE) || !source_mode
+        var ZoomSource = (oCursorMode.value==RESIZE) || source_mode
         
-        var xrs1=g[#_xs1,i]-(dif_x*Xkey);
-        var yrs1=g[#_ys1,i]-(dif_y*Ykey);
-        var xrs2=g[#_xs2,i]+(dif_x*Xkey);
-        var yrs2=g[#_ys2,i]+(dif_y*Ykey);
+        var xr1=g[#_x1,i]-(dif_x*Xkey*ZoomSurface);
+        var yr1=g[#_y1,i]-(dif_y*Ykey*ZoomSurface);
+        var xr2=g[#_x2,i]+(dif_x*Xkey*ZoomSurface);
+        var yr2=g[#_y2,i]+(dif_y*Ykey*ZoomSurface);
         
-        //test platných velikostí
+        var xrs1=g[#_xs1,i]-(dif_x*Xkey*ZoomSource);
+        var yrs1=g[#_ys1,i]-(dif_y*Ykey*ZoomSource);
+        var xrs2=g[#_xs2,i]+(dif_x*Xkey*ZoomSource);
+        var yrs2=g[#_ys2,i]+(dif_y*Ykey*ZoomSource);
+        
+        //zápis do gridu se u RESIZE provede jen při nenulových velikostech
         if ((xr2-xr1)&gt;0 &amp;&amp; (yr2-yr1)&gt;0) &amp;&amp; ((xrs2-xrs1)&gt;0 &amp;&amp; (yrs2-yrs1)&gt;0)
+        {
+        
+        if (oCursorMode.value==RESIZE) //při RESIZE se rovnou zapíší platné velikosti do gridu
         {
         g[#_x1,i]=xr1;
         g[#_y1,i]=yr1;
         g[#_x2,i]=xr2;
         g[#_y2,i]=yr2;
-
+     
         g[#_xs1,i]=xrs1;
         g[#_ys1,i]=yrs1;
         g[#_xs2,i]=xrs2;
         g[#_ys2,i]=yrs2;
-        }  
+        }
+        }
+        
+        //zatímco SCALE může mít hodnotu 0
+        if (oCursorMode.value==SCALE) //při SCALE se spočte xscale,yscale a zapíší se do gridu
+        {
+        g[#_xscale,i]=(xr2-xr1)/(xrs2-xrs1);
+        g[#_yscale,i]=(yr2-yr1)/(yrs2-yrs1);
+        }
+        
+          
         
         //pokud není starý surface zrovna zneplatněn, zlikviduj ho
         if surface_exists (g[#_id,i]) surface_free(g[#_id,i]);
@@ -280,6 +296,10 @@ if (oCursorMode.value==ADD) // Pokud tvoříme povrch
         g[#_ys2,position_in_grid]=g[#_y2,position_in_grid];       
         g[#_xs1,position_in_grid]=g[#_x1,position_in_grid];
         g[#_ys1,position_in_grid]=g[#_y1,position_in_grid];
+        
+        //zvětšení je na začátku 1:1
+        g[#_xscale,position_in_grid]=1;
+        g[#_yscale,position_in_grid]=1;
         
        }
        
@@ -705,6 +725,8 @@ if (oCursorMode.value==ADD) &amp;&amp; (creating_surface==1) // Pokud tvoříme 
           
      if g[#_id,i]!=0  //nulový index je rezervován pro ssource a nula v grid znamená prázdné pole
           {
+          
+           //dočasné proměnné x1,y1,x2,y2 kopírují aktuální stav v gridu
              var x1,y1,x2,y2;
                
                if source_mode==0
@@ -721,11 +743,11 @@ if (oCursorMode.value==ADD) &amp;&amp; (creating_surface==1) // Pokud tvoříme 
                var w=x2-x1;
                var h=y2-y1;
                
-               if w&gt;0 &amp;&amp; h&gt;0 g[#_id,i]=surface_create(w,h);                  
+               if (w&gt;0 &amp;&amp; h&gt;0) g[#_id,i]=surface_create(w,h);  //vytvoří se, pokud není velikost nula     
               }
               
-              
-             if surface_exists(g[#_id,i]) //pokud surface neexistuje, nekreslí se nic
+             //pokud surface neexistuje, nekreslí se nic
+             if surface_exists(g[#_id,i]) 
              {
                if source_mode==1
                {
@@ -736,43 +758,55 @@ if (oCursorMode.value==ADD) &amp;&amp; (creating_surface==1) // Pokud tvoříme 
                }
                     
   
-               
-               if g[#_selected,i]=1 &amp;&amp; moving==1 //pohybujeme
+               //pohybujeme
+               if g[#_selected,i]=1 &amp;&amp; moving==1 
                {
                 x1+=dif_x;
                 y1+=dif_y;
                 x2+=dif_x;
                 y2+=dif_y;
                }
-  
-                             
-               
+               //--                             
 
-        
+                 
                //obsah kopíruje source pokud není zapečen
                if g[#_baked,i]==0 surface_copy_part(g[#_id,i],0,0,ssource,g[#_xs1,i],g[#_ys1,i],g[#_xs2,i]-g[#_xs1,i],g[#_ys2,i]-g[#_ys1,i]);
+               //--
                
+               //obrys pro nevybraný povrch
                if (!g[#_selected,i]) {draw_rectangle(x1-1,y1-1,x2,y2,1);}
-              
-                // vykreslíme iterovaný povrch
+               //--
+
+               
+               //zoomshift
+               var zsx=((1-g[#_xscale,i])*(x2-x1)*!source_mode)/2;
+               var zsy=((1-g[#_yscale,i])*(y2-y1)*!source_mode)/2;
+               
+               
+               // vykreslíme iterovaný povrch
                if keyboard_check_direct(ord('H')) //dočasně skryje nevybrané
                {
-                  if (g[#_selected,i]) draw_surface(g[#_id,i],x1,y1); 
+                if (g[#_selected,i]) draw_surface_ext(g[#_id,i],x1+zsx,y1+zsy,g[#_xscale,i],g[#_yscale,i],0,c_white,1); 
                }
                else
-               { draw_surface(g[#_id,i],x1,y1); }
+               { 
+                draw_surface_ext(g[#_id,i],x1+zsx,y1+zsy,g[#_xscale,i],g[#_yscale,i],0,c_white,1);  
+               }
+               //--
                
                
-               if g[#_selected,i]=1 &amp;&amp; resizing==1 //měníme velikost - obrys
+               //měníme velikost - vykreslení obrysu
+               if g[#_selected,i]=1 &amp;&amp; resizing==1 
                {
                 var Xkey=!keyboard_check_direct(ord('X'));
                 var Ykey=!keyboard_check_direct(ord('Y'));                
                 draw_rectangle(x1-(dif_x*Xkey),y1-(dif_y*Ykey),x2+(dif_x*Xkey),y2+(dif_y*Ykey),1);
-                
-               }   
+               }
+               //-- 
                
                
              }
+             //---
            }
       }    
            
