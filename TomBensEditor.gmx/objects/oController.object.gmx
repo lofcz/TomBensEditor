@@ -188,15 +188,29 @@ dif_y= mouse_y - start_yy  ;  // Y-ová souřadnice
      if g[#_selected,i]==1 //které jsou vybrány
        {
         //resize surface i zdroje ( nezamčený aspect )
-        g[#_x1,i]-=dif_x;
-        g[#_y1,i]-=dif_y;
-        g[#_x2,i]+=dif_x;
-        g[#_y2,i]+=dif_y;
+        var xr1=g[#_x1,i]-dif_x;
+        var yr1=g[#_y1,i]-dif_y;
+        var xr2=g[#_x2,i]+dif_x;
+        var yr2=g[#_y2,i]+dif_y;
         
-        g[#_xs1,i]-=dif_x;
-        g[#_ys1,i]-=dif_y;
-        g[#_xs2,i]+=dif_x;
-        g[#_ys2,i]+=dif_y;
+        var xrs1=g[#_xs1,i]-dif_x;
+        var yrs1=g[#_ys1,i]-dif_y;
+        var xrs2=g[#_xs2,i]+dif_x;
+        var yrs2=g[#_ys2,i]+dif_y;
+        
+        //test platných velikostí
+        if ((xr2-xr1)&gt;0 &amp;&amp; (yr2-yr1)&gt;0) &amp;&amp; ((xrs2-xrs1)&gt;0 &amp;&amp; (yrs2-yrs1)&gt;0)
+        {
+        g[#_x1,i]=xr1;
+        g[#_y1,i]=yr1;
+        g[#_x2,i]=xr2;
+        g[#_y2,i]=yr2;
+
+        g[#_xs1,i]=xrs1;
+        g[#_ys1,i]=yrs1;
+        g[#_xs2,i]=xrs2;
+        g[#_ys2,i]=yrs2;
+        }  
         
         //pokud není starý surface zrovna zneplatněn, zlikviduj ho
         if surface_exists (g[#_id,i]) surface_free(g[#_id,i]);
@@ -727,15 +741,7 @@ if (oCursorMode.value==ADD) &amp;&amp; (creating_surface==1) // Pokud tvoříme 
                 y2+=dif_y;
                }
   
-                
-  
-               if g[#_selected,i]=1 &amp;&amp; resizing==1 //měníme velikost - obrys
-               {
-                
-                draw_rectangle(x1-dif_x,y1-dif_y,x2+dif_x,y2+dif_y,1);
-                
-               }   
-               
+                             
                
 
         
@@ -751,6 +757,16 @@ if (oCursorMode.value==ADD) &amp;&amp; (creating_surface==1) // Pokud tvoříme 
                }
                else
                { draw_surface(g[#_id,i],x1,y1); }
+               
+               
+               if g[#_selected,i]=1 &amp;&amp; resizing==1 //měníme velikost - obrys
+               {
+                
+                draw_rectangle(x1-dif_x,y1-dif_y,x2+dif_x,y2+dif_y,1);
+                
+               }   
+               
+               
              }
            }
       }    
