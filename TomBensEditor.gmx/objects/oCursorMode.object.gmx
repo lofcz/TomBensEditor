@@ -63,11 +63,13 @@ case MOVE: mode_string='MOVE'; break;
 case KILL: mode_string='KILL'; break;
 case DEPTH: mode_string='DEPTH'; break;
 case RESIZE: mode_string='RESIZE'; break;
+case SCALE: mode_string='SCALE'; break;
+
 
 default: mode_string=''; break; 
 }
 
-if keyboard_check_direct(vk_f1) mode_string='Add Select Move Kill Depth';
+if keyboard_check_direct(vk_f1) mode_string='Add Select Move Kill Depth Resize sCale';
 
 draw_text(10,30,'Cursor Mode: '+mode_string+string("#Press D to change depth, LMB to dec, RMB to inc.#Also try to select some, to see override effect."));
 </string>
@@ -94,6 +96,32 @@ draw_text(10,30,'Cursor Mode: '+mode_string+string("#Press D to change depth, LM
             <kind>1</kind>
             <string>///quickselect - změna módu s uložením stávajícího
 if keyboard_check_pressed(vk_lcontrol) saved_mode=value;
+
+</string>
+          </argument>
+        </arguments>
+      </action>
+    </event>
+    <event eventtype="10" enumb="27">
+      <action>
+        <libid>1</libid>
+        <id>603</id>
+        <kind>7</kind>
+        <userelative>0</userelative>
+        <isquestion>0</isquestion>
+        <useapplyto>-1</useapplyto>
+        <exetype>2</exetype>
+        <functionname></functionname>
+        <codestring></codestring>
+        <whoName>self</whoName>
+        <relative>0</relative>
+        <isnot>0</isnot>
+        <arguments>
+          <argument>
+            <kind>1</kind>
+            <string>///Escape do Oken
+game_end();
+
 
 </string>
           </argument>
@@ -146,6 +174,7 @@ case 'M': value=MOVE; break;
 case 'K': value=KILL; break;
 case 'D': value=DEPTH; break;
 case 'R': value=RESIZE; break;
+case 'C': value=SCALE; break;
 
 
 default:break;

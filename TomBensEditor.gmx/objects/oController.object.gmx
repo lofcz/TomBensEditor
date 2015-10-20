@@ -180,7 +180,7 @@ dif_y= mouse_y - start_yy  ;  // Y-ová souřadnice
             <kind>1</kind>
             <string>///resizing - zastavení
 
-    if (oCursorMode.value==RESIZE) // mód kurzoru je RESIZE
+    if (oCursorMode.value==RESIZE) || (oCursorMode.value==SCALE) // mód kurzoru je RESIZE nebo SCALE
     {
     
     for(i=0;i&lt;max_surfaces;i++) //pro všechny povrchy
@@ -188,15 +188,19 @@ dif_y= mouse_y - start_yy  ;  // Y-ová souřadnice
      if g[#_selected,i]==1 //které jsou vybrány
        {
         //resize surface i zdroje ( nezamčený aspect )
-        var xr1=g[#_x1,i]-dif_x;
-        var yr1=g[#_y1,i]-dif_y;
-        var xr2=g[#_x2,i]+dif_x;
-        var yr2=g[#_y2,i]+dif_y;
         
-        var xrs1=g[#_xs1,i]-dif_x;
-        var yrs1=g[#_ys1,i]-dif_y;
-        var xrs2=g[#_xs2,i]+dif_x;
-        var yrs2=g[#_ys2,i]+dif_y;
+        var Xkey=!keyboard_check_direct(ord('X'));
+        var Ykey=!keyboard_check_direct(ord('Y'));
+        
+        var xr1=g[#_x1,i]-(dif_x*Xkey);
+        var yr1=g[#_y1,i]-(dif_y*Ykey);
+        var xr2=g[#_x2,i]+(dif_x*Xkey);
+        var yr2=g[#_y2,i]+(dif_y*Ykey);
+        
+        var xrs1=g[#_xs1,i]-(dif_x*Xkey);
+        var yrs1=g[#_ys1,i]-(dif_y*Ykey);
+        var xrs2=g[#_xs2,i]+(dif_x*Xkey);
+        var yrs2=g[#_ys2,i]+(dif_y*Ykey);
         
         //test platných velikostí
         if ((xr2-xr1)&gt;0 &amp;&amp; (yr2-yr1)&gt;0) &amp;&amp; ((xrs2-xrs1)&gt;0 &amp;&amp; (yrs2-yrs1)&gt;0)
@@ -483,9 +487,9 @@ if (oCursorMode.value = KILL) // Pakliže máme vybraný stav kursoru jako "kill
         <arguments>
           <argument>
             <kind>1</kind>
-            <string>///start resize
+            <string>///start resize nebo scale
 
-    if (oCursorMode.value==RESIZE)&amp;&amp; resizing==0 // Pokud není vybraný žádný povrch a kliklo se, vytváříme nový povrch
+    if ((oCursorMode.value==RESIZE) || (oCursorMode.value==SCALE)) &amp;&amp; resizing==0 // Pokud není vybraný žádný povrch a kliklo se, vytváříme nový povrch
     {
     resizing = 1; // Posunujeme povrchy
    
@@ -761,8 +765,9 @@ if (oCursorMode.value==ADD) &amp;&amp; (creating_surface==1) // Pokud tvoříme 
                
                if g[#_selected,i]=1 &amp;&amp; resizing==1 //měníme velikost - obrys
                {
-                
-                draw_rectangle(x1-dif_x,y1-dif_y,x2+dif_x,y2+dif_y,1);
+                var Xkey=!keyboard_check_direct(ord('X'));
+                var Ykey=!keyboard_check_direct(ord('Y'));                
+                draw_rectangle(x1-(dif_x*Xkey),y1-(dif_y*Ykey),x2+(dif_x*Xkey),y2+(dif_y*Ykey),1);
                 
                }   
                
