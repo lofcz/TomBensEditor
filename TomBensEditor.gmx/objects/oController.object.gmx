@@ -784,13 +784,20 @@ if (oCursorMode.value==ADD) &amp;&amp; (creating_surface==1) // Pokud tvoříme 
                
                
                // vykreslíme iterovaný povrch
-               if keyboard_check_direct(ord('H')) //dočasně skryje nevybrané
+               if source_mode==0
                {
-                if (g[#_selected,i]) draw_surface_ext(g[#_id,i],x1+zsx,y1+zsy,g[#_xscale,i],g[#_yscale,i],0,c_white,1); 
+                if keyboard_check_direct(ord('H')) //dočasně skryje nevybrané
+                 { if (g[#_selected,i]) draw_surface_ext(g[#_id,i],x1+zsx,y1+zsy,g[#_xscale,i],g[#_yscale,i],0,c_white,1); }
+                else
+                 { draw_surface_ext(g[#_id,i],x1+zsx,y1+zsy,g[#_xscale,i],g[#_yscale,i],0,c_white,1); }
                }
                else
-               { 
-                draw_surface_ext(g[#_id,i],x1+zsx,y1+zsy,g[#_xscale,i],g[#_yscale,i],0,c_white,1);  
+               {
+                if keyboard_check_direct(ord('H')) //dočasně skryje nevybrané
+                 { if (g[#_selected,i]) draw_surface(g[#_id,i],x1,y1); }
+                else
+                 { draw_surface(g[#_id,i],x1,y1); }
+ 
                }
                //--
                
