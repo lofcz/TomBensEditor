@@ -20,10 +20,15 @@
       <script>scripts\is_between.gml</script>
     </scripts>
     <scripts name="ManipulateGrid">
+      <script>scripts\g_reset_defaults.gml</script>
       <script>scripts\g_surface_exists.gml</script>
       <script>scripts\g_new_place.gml</script>
       <script>scripts\g_surface_selected.gml</script>
       <script>scripts\g_surface_under_mouse.gml</script>
+    </scripts>
+    <scripts name="Debug">
+      <script>scripts\load_grid_content.gml</script>
+      <script>scripts\save_grid_content.gml</script>
     </scripts>
   </scripts>
   <objects name="objects">

@@ -57,22 +57,7 @@ g=ds_grid_create(grid_arguments,max_surfaces);
             <kind>1</kind>
             <string>/// Inicializace ostatních proměnných
 
-// Proměnné pro práci se selekcí a vytváření povrchů
-clicked          = 0; // Kontrola, zda bylo tento step kliknuto myší (bool)
-creating_surface = 0; // Zda vytvářime surface (bool)
-clicked_index    = -1; // Index vybraného povrchu, -1 značí žádný povrch (int32)
-moving           = 0; // Zda je tažen (bool)
-resizing         = 0; // Zda je měněna velikost (bool)
-source_mode      = 0; // režim manipulace se zdrojem obsahu ( 0 ukazuje výsledek, 1 zdroj obsahu )
-layer            = 0; // aktuální hloubka pro nové surfaces - čím vyšší, tím je hlouběji
-group            = -1; // aktuální group pro nové surfaces: -1 znamená bez group
-
-
-//průběžné
-start_xx = 0;  // X-ová souřadnice
-start_yy = 0;  // Y-ová souřadnice
-dif_x=0;       // rozdílová X
-dif_y=0;       // rozdílová Y
+g_reset_defaults();
 
 //jeden surface jako zdroj obsahu - vytvoření v Draw
 ssource=surface_create(room_width,room_height); // je nutné vytvořit alespoň jeden povrch, aby se index 0 nevyskytoval v grid
@@ -927,6 +912,80 @@ if (oCursorMode.value==ADD) &amp;&amp; (creating_surface==1) // Pokud tvoříme 
      }
  }
       
+
+</string>
+          </argument>
+        </arguments>
+      </action>
+    </event>
+    <event eventtype="10" enumb="123">
+      <action>
+        <libid>1</libid>
+        <id>603</id>
+        <kind>7</kind>
+        <userelative>0</userelative>
+        <isquestion>0</isquestion>
+        <useapplyto>-1</useapplyto>
+        <exetype>2</exetype>
+        <functionname></functionname>
+        <codestring></codestring>
+        <whoName>self</whoName>
+        <relative>0</relative>
+        <isnot>0</isnot>
+        <arguments>
+          <argument>
+            <kind>1</kind>
+            <string>g_reset_defaults(true);
+
+</string>
+          </argument>
+        </arguments>
+      </action>
+    </event>
+    <event eventtype="10" enumb="114">
+      <action>
+        <libid>1</libid>
+        <id>603</id>
+        <kind>7</kind>
+        <userelative>0</userelative>
+        <isquestion>0</isquestion>
+        <useapplyto>-1</useapplyto>
+        <exetype>2</exetype>
+        <functionname></functionname>
+        <codestring></codestring>
+        <whoName>self</whoName>
+        <relative>0</relative>
+        <isnot>0</isnot>
+        <arguments>
+          <argument>
+            <kind>1</kind>
+            <string>///SAVE
+save_grid_content(g);
+
+</string>
+          </argument>
+        </arguments>
+      </action>
+    </event>
+    <event eventtype="10" enumb="113">
+      <action>
+        <libid>1</libid>
+        <id>603</id>
+        <kind>7</kind>
+        <userelative>0</userelative>
+        <isquestion>0</isquestion>
+        <useapplyto>-1</useapplyto>
+        <exetype>2</exetype>
+        <functionname></functionname>
+        <codestring></codestring>
+        <whoName>self</whoName>
+        <relative>0</relative>
+        <isnot>0</isnot>
+        <arguments>
+          <argument>
+            <kind>1</kind>
+            <string>///LOAD
+load_grid_content(g);
 
 </string>
           </argument>
