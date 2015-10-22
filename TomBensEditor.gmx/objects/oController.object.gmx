@@ -902,7 +902,7 @@ if (oCursorMode.value==ADD) &amp;&amp; (creating_surface==1) // Pokud tvoříme 
              //--
               
                
-               draw_text(x1,y1, "ID: "+string(g[#_id,i]));
+               draw_text(x1,y1, "ID: "+string(g[#_id,i])+' at '+string(i) );
                draw_text(x1,y1+20, "Depth: "+string(g[#_depth,i]));
                
                // Pokud je povrch označený jako aktivní, vypíšeme to
