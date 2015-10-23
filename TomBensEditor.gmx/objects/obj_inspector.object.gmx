@@ -3,7 +3,7 @@
   <spriteName>&lt;undefined&gt;</spriteName>
   <solid>0</solid>
   <visible>-1</visible>
-  <depth>-1000</depth>
+  <depth>0</depth>
   <persistent>-1</persistent>
   <parentName>&lt;undefined&gt;</parentName>
   <maskName>&lt;undefined&gt;</maskName>
@@ -640,7 +640,7 @@ i++; //source_mode
 v[i]=string(subject.source_mode);
 v[i]=string_copy(v[i],0,mtl);
 
-i++; //mouse in window
+i++; //source_mode
 v[i]=string(mouse_x)+','+string(mouse_y);
 v[i]=string_copy(v[i],0,mtl);
 
