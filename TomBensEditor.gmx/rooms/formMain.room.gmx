@@ -18,8 +18,8 @@ scrInitiseRoom();</code>
   <clearDisplayBuffer>-1</clearDisplayBuffer>
   <makerSettings>
     <isSet>-1</isSet>
-    <w>1024</w>
-    <h>600</h>
+    <w>1374</w>
+    <h>732</h>
     <showGrid>-1</showGrid>
     <showObjects>-1</showObjects>
     <showTiles>-1</showTiles>
@@ -28,9 +28,9 @@ scrInitiseRoom();</code>
     <showViews>0</showViews>
     <deleteUnderlyingObj>0</deleteUnderlyingObj>
     <deleteUnderlyingTiles>-1</deleteUnderlyingTiles>
-    <page>0</page>
-    <xoffset>-181</xoffset>
-    <yoffset>-31</yoffset>
+    <page>1</page>
+    <xoffset>-188</xoffset>
+    <yoffset>-108</yoffset>
   </makerSettings>
   <backgrounds>
     <background visible="0" foreground="0" name="background0" x="0" y="0" htiled="0" vtiled="0" hspeed="0" vspeed="0" stretch="-1"/>
@@ -52,9 +52,7 @@ scrInitiseRoom();</code>
     <view visible="0" objName="&lt;undefined&gt;" xview="0" yview="0" wview="1024" hview="768" xport="0" yport="0" wport="1024" hport="768" hborder="32" vborder="32" hspeed="-1" vspeed="-1"/>
     <view visible="0" objName="&lt;undefined&gt;" xview="0" yview="0" wview="1024" hview="768" xport="0" yport="0" wport="1024" hport="768" hborder="32" vborder="32" hspeed="-1" vspeed="-1"/>
   </views>
-  <instances>
-    <instance objName="obj_inspector" x="32" y="64" name="inst_9419F193" locked="0" code="" scaleX="1" scaleY="1" colour="4294967295" rotation="0"/>
-  </instances>
+  <instances/>
   <tiles/>
   <PhysicsWorld>0</PhysicsWorld>
   <PhysicsWorldTop>0</PhysicsWorldTop>

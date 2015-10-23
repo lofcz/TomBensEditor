@@ -3,7 +3,7 @@
   <spriteName>&lt;undefined&gt;</spriteName>
   <solid>0</solid>
   <visible>-1</visible>
-  <depth>0</depth>
+  <depth>1000</depth>
   <persistent>0</persistent>
   <parentName>&lt;undefined&gt;</parentName>
   <maskName>&lt;undefined&gt;</maskName>
@@ -29,6 +29,110 @@
 value=ADD;
 saved_mode=value;
 
+//přichycení kurzoru na mřížku
+grid_lock=false;
+mx=display_mouse_get_x();
+my=display_mouse_get_y();
+mx_previous=mx;
+my_previous=my;
+mrizka_w=10;
+mrizka_h=10;
+offset_x=0;
+offset_y=0;
+
+view_room(0,64,64);
+
+
+</string>
+          </argument>
+        </arguments>
+      </action>
+    </event>
+    <event eventtype="3" enumb="1">
+      <action>
+        <libid>1</libid>
+        <id>603</id>
+        <kind>7</kind>
+        <userelative>0</userelative>
+        <isquestion>0</isquestion>
+        <useapplyto>-1</useapplyto>
+        <exetype>2</exetype>
+        <functionname></functionname>
+        <codestring></codestring>
+        <whoName>self</whoName>
+        <relative>0</relative>
+        <isnot>0</isnot>
+        <arguments>
+          <argument>
+            <kind>1</kind>
+            <string>///snap to grid - on CAPS LOCK
+
+if grid_lock 
+{
+mx=window_mouse_get_x();
+my=window_mouse_get_y();
+
+mbx=mx; mby=my; //backup values
+
+//diferencial
+mdx=(mx-mx_previous);
+mdy=(my-my_previous);
+
+//grid snap
+ mx=mx+(mrizka_w*sign(mdx));
+ my=my+(mrizka_h*sign(mdy));
+
+mx=((mx div mrizka_w)*mrizka_w);
+my=((my div mrizka_h)*mrizka_h);
+//--
+
+
+if coords_in_window(mx,my) { window_mouse_set(mx,my); } else { mx=mbx; my=mby; }
+
+
+mx_previous=mx;
+my_previous=my;
+}
+
+
+
+</string>
+          </argument>
+        </arguments>
+      </action>
+    </event>
+    <event eventtype="5" enumb="111">
+      <action>
+        <libid>1</libid>
+        <id>603</id>
+        <kind>7</kind>
+        <userelative>0</userelative>
+        <isquestion>0</isquestion>
+        <useapplyto>-1</useapplyto>
+        <exetype>2</exetype>
+        <functionname></functionname>
+        <codestring></codestring>
+        <whoName>self</whoName>
+        <relative>0</relative>
+        <isnot>0</isnot>
+        <arguments>
+          <argument>
+            <kind>1</kind>
+            <string>
+
+if keyboard_check(vk_left) offset_x--;
+if keyboard_check(vk_right) offset_x++;
+if keyboard_check(vk_up) offset_y--;
+if keyboard_check(vk_down) offset_y++;
+
+offset_x=offset_x mod mrizka_w;
+offset_y=offset_y mod mrizka_w;
+
+
+
+
+
+
 </string>
           </argument>
         </arguments>
@@ -51,7 +155,39 @@ saved_mode=value;
         <arguments>
           <argument>
             <kind>1</kind>
-            <string>set_font(4,c_black,1,-1);
+            <string>///mřížka
+
+clr(c_black,0.1);
+
+for(ix=0;ix&lt;room_width;ix+=mrizka_w) draw_line(ix+offset_x,0,ix+offset_x,room_height);
+for(iy=0;iy&lt;room_height;iy+=mrizka_h) draw_line(0,iy+offset_y,room_width,iy+offset_y);
+
+clr(c_black,1);
+
+
+</string>
+          </argument>
+        </arguments>
+      </action>
+      <action>
+        <libid>1</libid>
+        <id>603</id>
+        <kind>7</kind>
+        <userelative>0</userelative>
+        <isquestion>0</isquestion>
+        <useapplyto>-1</useapplyto>
+        <exetype>2</exetype>
+        <functionname></functionname>
+        <codestring></codestring>
+        <whoName>self</whoName>
+        <relative>0</relative>
+        <isnot>0</isnot>
+        <arguments>
+          <argument>
+            <kind>1</kind>
+            <string>///info k ovládání
+
+set_font(4,c_black,1,-1);
 
 var mode_string;
 
@@ -69,9 +205,20 @@ case SCALE: mode_string='SCALE'; break;
 default: mode_string=''; break; 
 }
 
-if keyboard_check_direct(vk_f1) mode_string='Add Select Move Kill Depth Resize sCale';
 
-draw_text(10,30,'Cursor Mode: '+mode_string+string("#Press D to change depth, LMB to dec, RMB to inc.#Also try to select some, to see override effect."));
+
+if keyboard_check_direct(vk_f1) mode_string='Add Select Move Kill Depth Resize sCale'; //názvy módů
+
+mode_string+="#Press D to change depth, LMB to dec, RMB to inc.#Also try to select some, to see override effect."; //help v druhém řádku
+
+mode_string='Cursor Mode: '+mode_string; //pevný přednázev
+
+if grid_lock clr(c_red) else clr(c_black);
+
+draw_text(10,30,mode_string);
+
+clr(c_black);
+
 </string>
           </argument>
         </arguments>
@@ -96,6 +243,8 @@ draw_text(10,30,'Cursor Mode: '+mode_string+string("#Press D to change depth, LM
             <kind>1</kind>
             <string>///quickselect - změna módu s uložením stávajícího
 if keyboard_check_pressed(vk_lcontrol) saved_mode=value;
+
+
 
 </string>
           </argument>
@@ -165,7 +314,7 @@ game_end();
         <arguments>
           <argument>
             <kind>1</kind>
-            <string>
+            <string>///key bindings
 switch(chr(keyboard_lastkey))
 {
 case 'S': value=SELECT; break;
@@ -185,6 +334,51 @@ if keyboard_check_released(vk_lcontrol) value=saved_mode;
 
 
 keyboard_lastkey=-1;
+
+
+</string>
+          </argument>
+        </arguments>
+      </action>
+      <action>
+        <libid>1</libid>
+        <id>605</id>
+        <kind>0</kind>
+        <userelative>0</userelative>
+        <isquestion>0</isquestion>
+        <useapplyto>0</useapplyto>
+        <exetype>0</exetype>
+        <functionname></functionname>
+        <codestring></codestring>
+        <whoName>self</whoName>
+        <relative>0</relative>
+        <isnot>0</isnot>
+        <arguments>
+          <argument>
+            <kind>1</kind>
+            <string>Numpad lomítko- snap to grid on/off</string>
+          </argument>
+        </arguments>
+      </action>
+      <action>
+        <libid>1</libid>
+        <id>603</id>
+        <kind>7</kind>
+        <userelative>0</userelative>
+        <isquestion>0</isquestion>
+        <useapplyto>-1</useapplyto>
+        <exetype>2</exetype>
+        <functionname></functionname>
+        <codestring></codestring>
+        <whoName>self</whoName>
+        <relative>0</relative>
+        <isnot>0</isnot>
+        <arguments>
+          <argument>
+            <kind>1</kind>
+            <string>///přepínač mřížky vk_divide
+if keyboard_check_released(vk_divide) { grid_lock=!grid_lock; }
+
 
 
 </string>

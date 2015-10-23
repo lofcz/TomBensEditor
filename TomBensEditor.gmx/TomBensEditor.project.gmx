@@ -30,6 +30,8 @@
       <script>scripts\load_grid_content.gml</script>
       <script>scripts\save_grid_content.gml</script>
     </scripts>
+    <script>scripts\view_room.gml</script>
+    <script>scripts\coords_in_window.gml</script>
   </scripts>
   <objects name="objects">
     <object>objects\oCursorMode</object>
