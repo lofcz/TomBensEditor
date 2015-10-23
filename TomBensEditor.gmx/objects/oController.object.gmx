@@ -168,9 +168,16 @@ alarm[0]=cursor_blink_time;
         <arguments>
           <argument>
             <kind>1</kind>
-            <string>///mrizka debugpoint
+            <string>///mrizka výpočet polohy kursoru
+ 
+ 
+//módy, které nepoužívají přitahování na mřížku
+no_snap=oCursorMode.value==SELECT;
+no_snap=no_snap || oCursorMode.value==KILL;
+no_snap=no_snap || oCursorMode.value==DEPTH;
 
-if mrizka_snap
+
+if mrizka_snap &amp;&amp; !no_snap
 {
 Mx=(round(mouse_x/mrizka_w)*mrizka_w)+mrizka_x;
 My=(round(mouse_y/mrizka_h)*mrizka_h)+mrizka_y;

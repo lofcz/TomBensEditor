@@ -95,7 +95,10 @@ draw_text(10,30,'Cursor Mode: '+mode_string+string("#Press D to change depth, LM
           <argument>
             <kind>1</kind>
             <string>///quickselect - změna módu s uložením stávajícího
-if keyboard_check_pressed(vk_lcontrol) saved_mode=value;
+if keyboard_check_pressed(ord('S')) { saved_mode=value; value=SELECT; }
+if keyboard_check_pressed(ord('K')) { saved_mode=value; value=KILL; }
+if keyboard_check_pressed(ord('D')) { saved_mode=value; value=DEPTH; }
+
 
 </string>
           </argument>
@@ -181,7 +184,9 @@ default:break;
 }
 
 //quickselect automatický návrat
-if keyboard_check_released(vk_lcontrol) value=saved_mode;
+if keyboard_check_released(ord('S')) value=saved_mode;
+if keyboard_check_released(ord('D')) value=saved_mode;
+if keyboard_check_released(ord('K')) value=saved_mode;
 
 
 keyboard_lastkey=-1;
