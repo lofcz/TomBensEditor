@@ -85,12 +85,65 @@ ssource=surface_create(room_width,room_height); // je nutné vytvořit alespoň 
           <argument>
             <kind>1</kind>
             <string>///mrizka defaults
-mrizka_w=20;
-mrizka_h=20;
-mrizka_x=0;
-mrizka_y=0;
+mrizka_w=100;
+mrizka_h=100;
+mrizka_x=20;
+mrizka_y=30;
 
 mrizka_snap=false;
+cursor_blink_time=room_speed/3;
+cursor_stay=cursor_blink_time/2;
+alarm[0]=cursor_blink_time;
+window_set_cursor(cr_none);
+
+</string>
+          </argument>
+        </arguments>
+      </action>
+    </event>
+    <event eventtype="1" enumb="0">
+      <action>
+        <libid>1</libid>
+        <id>603</id>
+        <kind>7</kind>
+        <userelative>0</userelative>
+        <isquestion>0</isquestion>
+        <useapplyto>-1</useapplyto>
+        <exetype>2</exetype>
+        <functionname></functionname>
+        <codestring></codestring>
+        <whoName>self</whoName>
+        <relative>0</relative>
+        <isnot>0</isnot>
+        <arguments>
+          <argument>
+            <kind>1</kind>
+            <string>window_set_cursor(cr_default);
+
+</string>
+          </argument>
+        </arguments>
+      </action>
+    </event>
+    <event eventtype="2" enumb="0">
+      <action>
+        <libid>1</libid>
+        <id>603</id>
+        <kind>7</kind>
+        <userelative>0</userelative>
+        <isquestion>0</isquestion>
+        <useapplyto>-1</useapplyto>
+        <exetype>2</exetype>
+        <functionname></functionname>
+        <codestring></codestring>
+        <whoName>self</whoName>
+        <relative>0</relative>
+        <isnot>0</isnot>
+        <arguments>
+          <argument>
+            <kind>1</kind>
+            <string>///repeat cursor blink
+alarm[0]=cursor_blink_time;
 
 
 </string>
@@ -115,12 +168,46 @@ mrizka_snap=false;
         <arguments>
           <argument>
             <kind>1</kind>
+            <string>///mrizka debugpoint
+
+if mrizka_snap
+{
+Mx=(round(mouse_x/mrizka_w)*mrizka_w)+mrizka_x;
+My=(round(mouse_y/mrizka_h)*mrizka_h)+mrizka_y;
+}
+else
+{
+Mx=mouse_x;
+My=mouse_y;
+}
+
+
+</string>
+          </argument>
+        </arguments>
+      </action>
+      <action>
+        <libid>1</libid>
+        <id>603</id>
+        <kind>7</kind>
+        <userelative>0</userelative>
+        <isquestion>0</isquestion>
+        <useapplyto>-1</useapplyto>
+        <exetype>2</exetype>
+        <functionname></functionname>
+        <codestring></codestring>
+        <whoName>self</whoName>
+        <relative>0</relative>
+        <isnot>0</isnot>
+        <arguments>
+          <argument>
+            <kind>1</kind>
             <string>///Přemisťování nebo změna velikosti surface
 
 if moving==1 || resizing==1
 {
-dif_x= mouse_x - start_xx  ;  // X-ová souřadnice
-dif_y= mouse_y - start_yy  ;  // Y-ová souřadnice
+dif_x= Mx - start_xx  ;  // X-ová souřadnice
+dif_y= My - start_yy  ;  // Y-ová souřadnice
 }
 
 
@@ -280,8 +367,8 @@ dif_y= mouse_y - start_yy  ;  // Y-ová souřadnice
 
 if (oCursorMode.value==ADD) // Pokud tvoříme povrch
    { 
-        surface_x = abs(mouse_x-start_xx); // Šířka surface (prozatím unused)
-        surface_y = abs(mouse_y-start_yy); // Výška surface (prozatím unused)
+        surface_x = abs(Mx-start_xx); // Šířka surface (prozatím unused)
+        surface_y = abs(My-start_yy); // Výška surface (prozatím unused)
         
      if surface_x&gt;0 &amp;&amp; surface_y&gt;0 //invalid surface dimensions
        {   
@@ -294,10 +381,10 @@ if (oCursorMode.value==ADD) // Pokud tvoříme povrch
          else show_debug_message('New surface was NOT created! ');
         
         // Do adekvátních sloupců gridu zapíšeme souřadnice x1,y1,x2,y2   
-        g[#_x2,position_in_grid]=max(mouse_x,start_xx); 
-        g[#_y2,position_in_grid]=max(mouse_y,start_yy);       
-        g[#_x1,position_in_grid]=min(mouse_x,start_xx);
-        g[#_y1,position_in_grid]=min(mouse_y,start_yy);
+        g[#_x2,position_in_grid]=max(Mx,start_xx); 
+        g[#_y2,position_in_grid]=max(My,start_yy);       
+        g[#_x1,position_in_grid]=min(Mx,start_xx);
+        g[#_y1,position_in_grid]=min(My,start_yy);
         
         //default pro flags
         g[#_baked,position_in_grid]=0;
@@ -495,8 +582,8 @@ if (oCursorMode.value = KILL) // Pakliže máme vybraný stav kursoru jako "kill
     moving = 1; // Posunujeme povrchy
    
     // Do 2D vektoru si uložíme souřadnice kurzoru(x,y)
-    start_xx = mouse_x;  // X-ová souřadnice
-    start_yy = mouse_y;  // Y-ová souřadnice
+    start_xx = Mx;  // X-ová souřadnice
+    start_yy = My;  // Y-ová souřadnice
     
     }
         
@@ -528,8 +615,8 @@ if (oCursorMode.value = KILL) // Pakliže máme vybraný stav kursoru jako "kill
     resizing = 1; // Posunujeme povrchy
    
     // Do 2D vektoru si uložíme souřadnice kurzoru(x,y)
-    start_xx = mouse_x;  // X-ová souřadnice
-    start_yy = mouse_y;  // Y-ová souřadnice
+    start_xx = Mx;  // X-ová souřadnice
+    start_yy = My;  // Y-ová souřadnice
     
     }
         
@@ -598,8 +685,8 @@ if (oCursorMode.value = DEPTH) // Pakliže máme vybraný stav kursoru jako "kil
     
     
     // Do 2D vektoru si uložíme souřadnice kurzoru(x,y)
-    start_xx = mouse_x;  // X-ová souřadnice
-    start_yy = mouse_y;  // Y-ová souřadnice
+    start_xx = Mx;  // X-ová souřadnice
+    start_yy = My;  // Y-ová souřadnice
     
     }
         
@@ -971,7 +1058,14 @@ for(iy=0;iy&lt;=room_height;iy+=mrizka_h) draw_line(0,iy+mrizka_y,room_width,iy+
 
 clr(c_black,1);
 
+draw_circle_colour(Mx,My,4,c_gray,c_gray,false);
 
+if alarm[0]&lt;cursor_stay
+{
+draw_circle_colour(Mx,My,5,c_yellow,c_gray,false);
+draw_circle_colour(Mx,My,8,c_dkgray,c_gray,false);
+draw_circle_colour(Mx,My,12,c_silver,c_gray,false);
+}
 </string>
           </argument>
         </arguments>
@@ -1046,6 +1140,29 @@ save_grid_content(g);
             <string>///LOAD
 load_grid_content(g);
 
+</string>
+          </argument>
+        </arguments>
+      </action>
+    </event>
+    <event eventtype="10" enumb="111">
+      <action>
+        <libid>1</libid>
+        <id>603</id>
+        <kind>7</kind>
+        <userelative>0</userelative>
+        <isquestion>0</isquestion>
+        <useapplyto>-1</useapplyto>
+        <exetype>2</exetype>
+        <functionname></functionname>
+        <codestring></codestring>
+        <whoName>self</whoName>
+        <relative>0</relative>
+        <isnot>0</isnot>
+        <arguments>
+          <argument>
+            <kind>1</kind>
+            <string>mrizka_snap=!mrizka_snap;
 </string>
           </argument>
         </arguments>
