@@ -68,6 +68,35 @@ ssource=surface_create(room_width,room_height); // je nutné vytvořit alespoň 
           </argument>
         </arguments>
       </action>
+      <action>
+        <libid>1</libid>
+        <id>603</id>
+        <kind>7</kind>
+        <userelative>0</userelative>
+        <isquestion>0</isquestion>
+        <useapplyto>-1</useapplyto>
+        <exetype>2</exetype>
+        <functionname></functionname>
+        <codestring></codestring>
+        <whoName>self</whoName>
+        <relative>0</relative>
+        <isnot>0</isnot>
+        <arguments>
+          <argument>
+            <kind>1</kind>
+            <string>///mrizka defaults
+mrizka_w=20;
+mrizka_h=20;
+mrizka_x=0;
+mrizka_y=0;
+
+mrizka_snap=false;
+
+
+</string>
+          </argument>
+        </arguments>
+      </action>
     </event>
     <event eventtype="3" enumb="0">
       <action>
@@ -912,6 +941,36 @@ if (oCursorMode.value==ADD) &amp;&amp; (creating_surface==1) // Pokud tvoříme 
      }
  }
       
+
+</string>
+          </argument>
+        </arguments>
+      </action>
+      <action>
+        <libid>1</libid>
+        <id>603</id>
+        <kind>7</kind>
+        <userelative>0</userelative>
+        <isquestion>0</isquestion>
+        <useapplyto>-1</useapplyto>
+        <exetype>2</exetype>
+        <functionname></functionname>
+        <codestring></codestring>
+        <whoName>self</whoName>
+        <relative>0</relative>
+        <isnot>0</isnot>
+        <arguments>
+          <argument>
+            <kind>1</kind>
+            <string>///vykresleni mrizky
+
+clr(c_black,0.1);
+
+for(ix=0;ix&lt;=room_width;ix+=mrizka_w) draw_line(ix+mrizka_x,0,ix+mrizka_x,room_height);
+for(iy=0;iy&lt;=room_height;iy+=mrizka_h) draw_line(0,iy+mrizka_y,room_width,iy+mrizka_y);
+
+clr(c_black,1);
+
 
 </string>
           </argument>
