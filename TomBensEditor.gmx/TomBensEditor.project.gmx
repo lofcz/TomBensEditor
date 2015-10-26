@@ -29,8 +29,18 @@
     <scripts name="Debug">
       <script>scripts\load_grid_content.gml</script>
       <script>scripts\save_grid_content.gml</script>
+      <script>scripts\warning.gml</script>
+    </scripts>
+    <scripts name="F_MENU">
+      <script>scripts\menu_function.gml</script>
+      <script>scripts\menu_names.gml</script>
+      <script>scripts\get_F_key.gml</script>
+      <script>scripts\mode_name.gml</script>
     </scripts>
   </scripts>
+  <fonts name="fonts">
+    <font>fonts\menu_font</font>
+  </fonts>
   <objects name="objects">
     <object>objects\oCursorMode</object>
     <object>objects\oController</object>
@@ -39,7 +49,9 @@
   <rooms name="rooms">
     <room>rooms\formMain</room>
   </rooms>
-  <constants number="24">
+  <constants number="27">
+    <constant name="on">true</constant>
+    <constant name="off">false</constant>
     <constant name="SELECT">0</constant>
     <constant name="ADD">1</constant>
     <constant name="KILL">2</constant>
@@ -47,6 +59,7 @@
     <constant name="DEPTH">4</constant>
     <constant name="RESIZE">5</constant>
     <constant name="SCALE">6</constant>
+    <constant name="ROTATE">7</constant>
     <constant name="vzestupne">true</constant>
     <constant name="sestupne">false</constant>
     <constant name="_id">0</constant>

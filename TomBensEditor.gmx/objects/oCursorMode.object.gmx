@@ -27,7 +27,42 @@
             <kind>1</kind>
             <string>///init
 value=ADD;
-saved_mode=value;
+//saved_mode=value;
+menu_level=0;
+
+</string>
+          </argument>
+        </arguments>
+      </action>
+      <action>
+        <libid>1</libid>
+        <id>603</id>
+        <kind>7</kind>
+        <userelative>0</userelative>
+        <isquestion>0</isquestion>
+        <useapplyto>-1</useapplyto>
+        <exetype>2</exetype>
+        <functionname></functionname>
+        <codestring></codestring>
+        <whoName>self</whoName>
+        <relative>0</relative>
+        <isnot>0</isnot>
+        <arguments>
+          <argument>
+            <kind>1</kind>
+            <string>///virtual_keys
+
+BTN_w=display_get_gui_width()/32; //pul sirky tlacitka
+BTN_h=display_get_gui_height()/50; //pul vysky tlacitka
+
+for(i=1;i&lt;=12;i++)
+{
+drx=BTN_w+(2.5*(i-1)*BTN_w);
+dry=BTN_h;
+virt[i]=virtual_key_add(drx-BTN_w, dry-BTN_h, BTN_w*2, BTN_h*2, 111+i);
+}
+
+
 
 </string>
           </argument>
@@ -51,53 +86,24 @@ saved_mode=value;
         <arguments>
           <argument>
             <kind>1</kind>
-            <string>set_font(4,c_black,1,-1);
+            <string>///draw menu
 
-var mode_string;
+//test F kláves
+F=get_F_key(ev_keyboard); //press+hold+release
 
-switch(value)
+//vykreslení tlačítek
+set_font(5,c_black,1,menu_font);
+for(i=1;i&lt;=12;i++)
 {
-case ADD: mode_string='ADD'; break; 
-case SELECT: mode_string='SELECT'; break; 
-case MOVE: mode_string='MOVE'; break;
-case KILL: mode_string='KILL'; break;
-case DEPTH: mode_string='DEPTH'; break;
-case RESIZE: mode_string='RESIZE'; break;
-case SCALE: mode_string='SCALE'; break;
-
-
-default: mode_string=''; break; 
+drx=BTN_w+(2.5*(i-1)*BTN_w);
+dry=BTN_h;
+draw_roundrect(drx-BTN_w,0,drx+BTN_w,2*BTN_h,F!=i);
+if F!=i clr(c_black) else clr(c_white);
+draw_text(drx,dry,menu_names(i,menu_level)); clr(c_black);
 }
 
-if keyboard_check_direct(vk_f1) mode_string='Add Select Move Kill Depth Resize sCale';
-
-draw_text(10,30,'Cursor Mode: '+mode_string+string("#Press D to change depth, LMB to dec, RMB to inc.#Also try to select some, to see override effect."));
-</string>
-          </argument>
-        </arguments>
-      </action>
-    </event>
-    <event eventtype="9" enumb="1">
-      <action>
-        <libid>1</libid>
-        <id>603</id>
-        <kind>7</kind>
-        <userelative>0</userelative>
-        <isquestion>0</isquestion>
-        <useapplyto>-1</useapplyto>
-        <exetype>2</exetype>
-        <functionname></functionname>
-        <codestring></codestring>
-        <whoName>self</whoName>
-        <relative>0</relative>
-        <isnot>0</isnot>
-        <arguments>
-          <argument>
-            <kind>1</kind>
-            <string>///quickselect - změna módu s uložením stávajícího
-if keyboard_check_pressed(ord('S')) { saved_mode=value; value=SELECT; }
-if keyboard_check_pressed(ord('K')) { saved_mode=value; value=KILL; }
-if keyboard_check_pressed(ord('D')) { saved_mode=value; value=DEPTH; }
+set_font(4,c_black,1,menu_font);
+draw_text(20,BTN_h*3,'Mode: '+mode_name(value));
 
 
 </string>
@@ -122,8 +128,8 @@ if keyboard_check_pressed(ord('D')) { saved_mode=value; value=DEPTH; }
         <arguments>
           <argument>
             <kind>1</kind>
-            <string>///Escape do Oken
-game_end();
+            <string>///Escape dotaz
+if menu_level!=0 menu_level=0 else menu_level=666;
 
 
 </string>
@@ -168,29 +174,43 @@ game_end();
         <arguments>
           <argument>
             <kind>1</kind>
-            <string>
-switch(chr(keyboard_lastkey))
+            <string>///TAB visibility
+if keyboard_check_released(vk_tab)
 {
-case 'S': value=SELECT; break;
-case 'A': value=ADD; break;
-case 'M': value=MOVE; break;
-case 'K': value=KILL; break;
-case 'D': value=DEPTH; break;
-case 'R': value=RESIZE; break;
-case 'C': value=SCALE; break;
-
-
-default:break;
+visible=!visible;
 }
 
-//quickselect automatický návrat
-if keyboard_check_released(ord('S')) value=saved_mode;
-if keyboard_check_released(ord('D')) value=saved_mode;
-if keyboard_check_released(ord('K')) value=saved_mode;
+</string>
+          </argument>
+        </arguments>
+      </action>
+      <action>
+        <libid>1</libid>
+        <id>603</id>
+        <kind>7</kind>
+        <userelative>0</userelative>
+        <isquestion>0</isquestion>
+        <useapplyto>-1</useapplyto>
+        <exetype>2</exetype>
+        <functionname></functionname>
+        <codestring></codestring>
+        <whoName>self</whoName>
+        <relative>0</relative>
+        <isnot>0</isnot>
+        <arguments>
+          <argument>
+            <kind>1</kind>
+            <string>///test F kláves a provedení jejich funkce
 
+F=get_F_key(ev_keyrelease);
+show_debug_message('F: '+string(F));
 
-keyboard_lastkey=-1;
-
+//provede akci a vrátí nastavený level
+if is_between(1,F,12)
+{
+menu_level=menu_function(F,menu_level);
+show_debug_message('F'+string(F)+' menu used. Current level: '+string(menu_level)+' Current mode: '+mode_name(value));
+}
 
 </string>
           </argument>
