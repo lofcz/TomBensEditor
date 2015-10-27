@@ -85,6 +85,9 @@ ssource=surface_create(room_width,room_height); // je nutné vytvořit alespoň 
           <argument>
             <kind>1</kind>
             <string>///mrizka defaults
+
+guides=on;
+
 mrizka_w=100;
 mrizka_h=100;
 mrizka_x=20;
@@ -1133,15 +1136,21 @@ if (oCursorMode.value==ADD) &amp;&amp; (creating_surface==1) // Pokud tvoříme 
         <arguments>
           <argument>
             <kind>1</kind>
-            <string>///vykresleni mrizky
+            <string>///vykresleni mrizky a kurzoru
 
+//vykreslení mřížky
+if guides
+{
 clr(c_black,0.1);
 
 for(ix=0;ix&lt;=room_width;ix+=mrizka_w) draw_line(ix+mrizka_x,0,ix+mrizka_x,room_height);
 for(iy=0;iy&lt;=room_height;iy+=mrizka_h) draw_line(0,iy+mrizka_y,room_width,iy+mrizka_y);
 
 clr(c_black,1);
+}
 
+
+//vykreslení kurzoru
 draw_circle_colour(Mx,My,4,c_gray,c_gray,false);
 
 if alarm[0]&lt;cursor_stay
@@ -1150,6 +1159,8 @@ draw_circle_colour(Mx,My,5,c_yellow,c_gray,false);
 draw_circle_colour(Mx,My,8,c_dkgray,c_gray,false);
 draw_circle_colour(Mx,My,12,c_silver,c_gray,false);
 }
+
+
 </string>
           </argument>
         </arguments>

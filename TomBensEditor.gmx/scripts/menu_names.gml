@@ -3,10 +3,17 @@
 //backfire
 if argument_count<2 return('');
 
-//folder_color
-var folc,org;
-org=draw_get_colour();
-if org==c_black folc=make_colour_rgb(0,0,60) else folc=org;
+//colors
+var ccc,orig,on_c,off_c;
+orig=draw_get_colour(); //příchozí barva
+
+dkg_blue=make_colour_rgb(0,0,60) //barva složky
+on_c=c_maroon;                   //barva switche ON
+off_c=c_olive;                   //barva switche OFF
+
+if orig==c_black ccc=dkg_blue else ccc=orig;
+
+
 
 
 //názvy pro menu level:
@@ -19,22 +26,22 @@ case 0:
  {
  //F1
  case 1:
-  clr(folc)
+  clr(ccc)
   return('FILE');
  break;
  //F2
  case 2:
-  clr(folc)
+  clr(ccc)
   return('TRANSFORM');
  break;
   //F3
  case 3:
-  clr(folc)
+  clr(ccc)
   return('DELETE');
  break;
  //F4
  case 4:
-  clr(folc)
+  clr(ccc)
   return('PROPS');
  break;
  //F5
@@ -45,7 +52,15 @@ case 0:
  case 6:
   return('ADD');
  break;  
- 
+ //F7
+ case 7:
+  return('GRID');
+ break;
+ //F8
+ case 8:
+  return('BLEND');
+ break;   
+  
  //F11
  case 11:
   return('HELP');
@@ -65,11 +80,11 @@ case 1:
  {
  //F1
  case 1:
-  return('LOAD GRID');
+  return('LOAD DATA');
  break;
  //F2
  case 2:
-  return('SAVE GRID');
+  return('SAVE DATA');
  break;
  
  
@@ -174,7 +189,7 @@ case 4:
  break;
  //F2
  case 2:
-  clr(folc)
+  clr(ccc)
   return('GROUPS');
  break;
  
@@ -196,6 +211,52 @@ case 4:
 break;
 //---
 
+//---level 5----------------------------------------------------------------------------------
+case 5:
+ switch(argument[0]) //key switch
+ {
+ //F1
+ case 1:
+ if oController.mrizka_snap { clr(off_c); return('SNAP OFF'); } else { clr(on_c); return('SNAP ON'); }
+ break;
+ //F2
+ case 2:
+ if oController.guides { clr(off_c); return('HIDE'); } else { clr(on_c); return('SHOW'); }
+ break;
+
+ //F3
+ case 3:
+  return(' '); //empty place
+ break; 
+  
+ //F4
+ case 4:
+  return('G.MOVE');
+ break;
+ 
+ //F5
+ case 5:
+  return('G.SIZE');
+ break;
+  
+ 
+ 
+ //F11
+ case 11:
+  return('HELP');
+ break;
+ //F12
+ case 12:
+  return('BACK');
+ break; 
+ 
+ //---Other keycodes---
+ default:
+ return('');
+ break; 
+ }
+break;
+//---
 
 
 //---level 999----------------------------------------------------------------------------------

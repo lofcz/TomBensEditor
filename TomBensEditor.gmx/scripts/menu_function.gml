@@ -38,7 +38,11 @@ case 0:
   value=ADD;
   return(argument[1]);
  break;
-  
+  //F7
+ case 7:
+  return(5);
+ break;
+   
  
  //F11
  case 11:
@@ -217,6 +221,55 @@ break;
 //---
 
 
+//GUIDES
+//---level 5----------------------------------------------------------------------------------
+case 5:
+ switch(argument[0]) //key switch
+ {
+ //F1
+ case 1:                                 //vypínač přichytávání mřížky
+  oController.mrizka_snap=!oController.mrizka_snap                            
+  return(argument[1]);
+ break;
+ //F2
+ case 2:
+  oController.guides=!oController.guides
+  return(argument[1]);                   //vypínač zobrazení mřížky
+ break;
+ //F3
+ case 3:
+  return(argument[1]);                   //prázdné místo - předchází překlepům
+ break;
+  //F4
+ case 4:
+  value=GMOVE;
+  return(argument[1]);
+ break;
+  //F5
+ case 5:
+  value=GSIZE;
+  return(argument[1]);
+ break; 
+ 
+ //F11
+ case 11:
+  return(argument[1]);                  //HELP
+ break;
+
+ //F12
+ case 12:                               //BACK
+  return(0);
+ break;
+ 
+   
+ //---Other keycodes---
+ default:
+ warning(001,string(argument[0]));
+ return(argument[1]);
+ break; 
+ }
+break;
+//---
 
 
 //GO TO HELL
