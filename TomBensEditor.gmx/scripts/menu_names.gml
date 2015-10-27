@@ -3,6 +3,12 @@
 //backfire
 if argument_count<2 return('');
 
+//folder_color
+var folc,org;
+org=draw_get_colour();
+if org==c_black folc=make_colour_rgb(0,0,60) else folc=org;
+
+
 //názvy pro menu level:
 switch (argument[1]) //level switch
 {
@@ -13,18 +19,22 @@ case 0:
  {
  //F1
  case 1:
+  clr(folc)
   return('FILE');
  break;
  //F2
  case 2:
+  clr(folc)
   return('TRANSFORM');
  break;
   //F3
  case 3:
+  clr(folc)
   return('DELETE');
  break;
  //F4
  case 4:
+  clr(folc)
   return('PROPS');
  break;
  //F5
@@ -164,7 +174,8 @@ case 4:
  break;
  //F2
  case 2:
-  return('GROUP');
+  clr(folc)
+  return('GROUPS');
  break;
  
  
