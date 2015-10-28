@@ -54,6 +54,7 @@ case 0:
  break;  
  //F7
  case 7:
+  clr(ccc)
   return('GRID');
  break;
  //F8
@@ -217,11 +218,11 @@ case 5:
  {
  //F1
  case 1:
- if oController.mrizka_snap { clr(off_c); return('SNAP OFF'); } else { clr(on_c); return('SNAP ON'); }
+ if oController.mrizka_snap { clr(on_c); return('SNAP ON'); } else { clr(off_c); return('SNAP OFF'); }
  break;
  //F2
  case 2:
- if oController.guides { clr(off_c); return('HIDE'); } else { clr(on_c); return('SHOW'); }
+ if oController.guides { clr(on_c); return('SHOW'); } else { clr(off_c); return('HIDE'); }
  break;
 
  //F3

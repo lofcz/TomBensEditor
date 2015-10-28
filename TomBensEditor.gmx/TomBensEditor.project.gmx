@@ -34,8 +34,8 @@
     <scripts name="F_MENU">
       <script>scripts\menu_function.gml</script>
       <script>scripts\menu_names.gml</script>
-      <script>scripts\get_F_key.gml</script>
       <script>scripts\mode_name.gml</script>
+      <script>scripts\get_F_key.gml</script>
     </scripts>
   </scripts>
   <fonts name="fonts">

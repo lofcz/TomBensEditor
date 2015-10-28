@@ -243,12 +243,12 @@ case 5:
   //F4
  case 4:
   value=GMOVE;
-  return(argument[1]);
+  return(0);
  break;
   //F5
  case 5:
   value=GSIZE;
-  return(argument[1]);
+  return(0);
  break; 
  
  //F11

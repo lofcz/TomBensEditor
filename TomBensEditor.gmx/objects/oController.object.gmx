@@ -55,14 +55,22 @@ g=ds_grid_create(grid_arguments,max_surfaces);
         <arguments>
           <argument>
             <kind>1</kind>
-            <string>/// Inicializace ostatních proměnných
+            <string>///mrizka defaults
 
-g_reset_defaults();
+guides=on;
 
-//jeden surface jako zdroj obsahu - vytvoření v Draw
-ssource=surface_create(room_width,room_height); // je nutné vytvořit alespoň jeden povrch, aby se index 0 nevyskytoval v grid
+mrizka_w=100;
+mrizka_h=100;
+mrizka_x=20;
+mrizka_y=30;
 
-
+mrizka_snap=false;
+cursor_blink_time=room_speed/3;
+cursor_stay=cursor_blink_time/2;
+alarm[0]=cursor_blink_time;
+window_set_cursor(cr_none);
+grid_moving=0;
+grid_resizing=0;
 
 </string>
           </argument>
@@ -84,20 +92,14 @@ ssource=surface_create(room_width,room_height); // je nutné vytvořit alespoň 
         <arguments>
           <argument>
             <kind>1</kind>
-            <string>///mrizka defaults
+            <string>/// Inicializace ostatních proměnných
 
-guides=on;
+g_reset_defaults();
 
-mrizka_w=100;
-mrizka_h=100;
-mrizka_x=20;
-mrizka_y=30;
+//jeden surface jako zdroj obsahu - vytvoření v Draw
+ssource=surface_create(room_width,room_height); // je nutné vytvořit alespoň jeden povrch, aby se index 0 nevyskytoval v grid
 
-mrizka_snap=false;
-cursor_blink_time=room_speed/3;
-cursor_stay=cursor_blink_time/2;
-alarm[0]=cursor_blink_time;
-window_set_cursor(cr_none);
+
 
 </string>
           </argument>
@@ -178,18 +180,23 @@ alarm[0]=cursor_blink_time;
 no_snap=oCursorMode.value==SELECT;
 no_snap=no_snap || oCursorMode.value==KILL;
 no_snap=no_snap || oCursorMode.value==DEPTH;
+no_snap=no_snap || oCursorMode.value==GMOVE;
+no_snap=no_snap || oCursorMode.value==GSIZE;
 
 
-if mrizka_snap &amp;&amp; !no_snap
+
+if mrizka_snap &amp;&amp; !no_snap // klávesy X,Y znamenají axis lock
 {
-Mx=(round(mouse_x/mrizka_w)*mrizka_w)+mrizka_x;
-My=(round(mouse_y/mrizka_h)*mrizka_h)+mrizka_y;
+if !keyboard_check_direct(ord('X')) Mx=(round(mouse_x/mrizka_w)*mrizka_w)+mrizka_x;
+if !keyboard_check_direct(ord('Y')) My=(round(mouse_y/mrizka_h)*mrizka_h)+mrizka_y;
 }
 else
 {
-Mx=mouse_x;
-My=mouse_y;
+if !keyboard_check_direct(ord('X')) Mx=mouse_x;
+if !keyboard_check_direct(ord('Y')) My=mouse_y;
 }
+
+
 
 
 </string>
@@ -212,13 +219,63 @@ My=mouse_y;
         <arguments>
           <argument>
             <kind>1</kind>
-            <string>///Přemisťování nebo změna velikosti surface
+            <string>///Přemisťování nebo změny velikosti (surface, mřížky..) - výpočet diferenciálu
 
+//pohyb nebo změna velikosti surface
 if moving==1 || resizing==1
 {
 dif_x= Mx - start_xx  ;  // X-ová souřadnice
 dif_y= My - start_yy  ;  // Y-ová souřadnice
 }
+
+if grid_moving==1 
+{
+dif_x= Mx - start_xx  ;  // X-ová souřadnice
+dif_y= My - start_yy  ;  // Y-ová souřadnice
+dif_x= dif_x mod mrizka_w;
+dif_y= dif_y mod mrizka_h;
+}
+
+if grid_resizing==1 
+{
+dif_x= Mx - start_xx  ;  // X-ová souřadnice
+dif_y= My - start_yy  ;  // Y-ová souřadnice
+}
+
+if keyboard_check_direct(vk_shift) //aspect lock
+{
+var d=mean(dif_x,dif_y);
+dif_x=d; dif_y=d;
+}
+
+</string>
+          </argument>
+        </arguments>
+      </action>
+    </event>
+    <event eventtype="6" enumb="57">
+      <action>
+        <libid>1</libid>
+        <id>603</id>
+        <kind>7</kind>
+        <userelative>0</userelative>
+        <isquestion>0</isquestion>
+        <useapplyto>-1</useapplyto>
+        <exetype>2</exetype>
+        <functionname></functionname>
+        <codestring></codestring>
+        <whoName>self</whoName>
+        <relative>0</relative>
+        <isnot>0</isnot>
+        <arguments>
+          <argument>
+            <kind>1</kind>
+            <string>///zanech všeho
+moving=0;
+resizing=0;
+grid_moving=0;
+grid_resizing=0;
+creating_surface=0;
 
 
 </string>
@@ -267,6 +324,70 @@ dif_y= My - start_yy  ;  // Y-ová souřadnice
     }
     
     moving = 0; // Posunujeme povrch
+    }
+
+</string>
+          </argument>
+        </arguments>
+      </action>
+      <action>
+        <libid>1</libid>
+        <id>603</id>
+        <kind>7</kind>
+        <userelative>0</userelative>
+        <isquestion>0</isquestion>
+        <useapplyto>-1</useapplyto>
+        <exetype>2</exetype>
+        <functionname></functionname>
+        <codestring></codestring>
+        <whoName>self</whoName>
+        <relative>0</relative>
+        <isnot>0</isnot>
+        <arguments>
+          <argument>
+            <kind>1</kind>
+            <string>///přesun mřížky - zastavení
+
+    if (oCursorMode.value==GMOVE) // Pokud není vybraný žádný povrch a kliklo se, vytváříme nový povrch
+    {
+    
+    mrizka_x=(mrizka_x+dif_x) mod mrizka_w;
+    mrizka_y=(mrizka_y+dif_y) mod mrizka_h;
+    
+    grid_moving = 0; // konec posunu mřížky
+    }
+
+</string>
+          </argument>
+        </arguments>
+      </action>
+      <action>
+        <libid>1</libid>
+        <id>603</id>
+        <kind>7</kind>
+        <userelative>0</userelative>
+        <isquestion>0</isquestion>
+        <useapplyto>-1</useapplyto>
+        <exetype>2</exetype>
+        <functionname></functionname>
+        <codestring></codestring>
+        <whoName>self</whoName>
+        <relative>0</relative>
+        <isnot>0</isnot>
+        <arguments>
+          <argument>
+            <kind>1</kind>
+            <string>///změna velikosti mřížky - zastavení
+
+    if (oCursorMode.value==GSIZE) 
+    {
+    
+    mrizka_w=(mrizka_w+dif_x);
+    mrizka_h=(mrizka_h+dif_y);
+    mrizka_w=clamp(mrizka_w,0,room_width);
+    mrizka_h=clamp(mrizka_h,0,room_height);    
+    
+    grid_resizing = 0; // konec posunu mřížky
     }
 
 </string>
@@ -375,7 +496,7 @@ dif_y= My - start_yy  ;  // Y-ová souřadnice
             <kind>1</kind>
             <string>///dokončení tvorby nového a zápis do ds_
 
-if (oCursorMode.value==ADD) // Pokud tvoříme povrch
+if (oCursorMode.value==ADD) &amp;&amp; creating_surface // Pokud tvoříme povrch
    { 
         surface_x = abs(Mx-start_xx); // Šířka surface (prozatím unused)
         surface_y = abs(My-start_yy); // Výška surface (prozatím unused)
@@ -618,11 +739,77 @@ if (oCursorMode.value = KILL) // Pakliže máme vybraný stav kursoru jako "kill
         <arguments>
           <argument>
             <kind>1</kind>
+            <string>///start přesunu mřížky - GMOVE
+
+    if (oCursorMode.value==GMOVE)&amp;&amp; grid_moving==0 // Pokud není vybraný žádný povrch a kliklo se, vytváříme nový povrch
+    {
+    grid_moving = 1; // Posunujeme povrchy
+   
+    // Do 2D vektoru si uložíme souřadnice kurzoru(x,y)
+    start_xx = Mx;  // X-ová souřadnice
+    start_yy = My;  // Y-ová souřadnice
+    
+    }
+        
+
+</string>
+          </argument>
+        </arguments>
+      </action>
+      <action>
+        <libid>1</libid>
+        <id>603</id>
+        <kind>7</kind>
+        <userelative>0</userelative>
+        <isquestion>0</isquestion>
+        <useapplyto>-1</useapplyto>
+        <exetype>2</exetype>
+        <functionname></functionname>
+        <codestring></codestring>
+        <whoName>self</whoName>
+        <relative>0</relative>
+        <isnot>0</isnot>
+        <arguments>
+          <argument>
+            <kind>1</kind>
             <string>///start resize nebo scale
 
     if ((oCursorMode.value==RESIZE) || (oCursorMode.value==SCALE)) &amp;&amp; resizing==0 // Pokud není vybraný žádný povrch a kliklo se, vytváříme nový povrch
     {
     resizing = 1; // Posunujeme povrchy
+   
+    // Do 2D vektoru si uložíme souřadnice kurzoru(x,y)
+    start_xx = Mx;  // X-ová souřadnice
+    start_yy = My;  // Y-ová souřadnice
+    
+    }
+        
+
+</string>
+          </argument>
+        </arguments>
+      </action>
+      <action>
+        <libid>1</libid>
+        <id>603</id>
+        <kind>7</kind>
+        <userelative>0</userelative>
+        <isquestion>0</isquestion>
+        <useapplyto>-1</useapplyto>
+        <exetype>2</exetype>
+        <functionname></functionname>
+        <codestring></codestring>
+        <whoName>self</whoName>
+        <relative>0</relative>
+        <isnot>0</isnot>
+        <arguments>
+          <argument>
+            <kind>1</kind>
+            <string>///start změny velikosti mřížky
+
+    if (oCursorMode.value==GSIZE) // Pokud není vybraný žádný povrch a kliklo se, vytváříme nový povrch
+    {
+    grid_resizing = 1; // škálujeme mřížku
    
     // Do 2D vektoru si uložíme souřadnice kurzoru(x,y)
     start_xx = Mx;  // X-ová souřadnice
@@ -874,7 +1061,7 @@ if source_mode==1
 
 if (oCursorMode.value==ADD) &amp;&amp; (creating_surface==1) // Pokud tvoříme povrch
    {
-    draw_rectangle(start_xx,start_yy,mouse_x,mouse_y,1); // Vykreslíme obdélník od počátečních k aktuálním souřadnicím kurzoru
+    draw_rectangle(start_xx,start_yy,Mx,My,1); // Vykreslíme obdélník od počátečních k aktuálním souřadnicím kurzoru
    }
    
    
@@ -1141,10 +1328,37 @@ if (oCursorMode.value==ADD) &amp;&amp; (creating_surface==1) // Pokud tvoříme 
 //vykreslení mřížky
 if guides
 {
+
+//presun mrizky
+var mrx=mrizka_x;
+var mry=mrizka_y;
+var mx0=0;              //od
+var mx1=room_width;     //do
+var my0=0;              //od
+var my1=room_height;    //do
+var mrw=mrizka_w;
+var mrh=mrizka_h;
+
+if grid_moving
+{
+mrx+=dif_x;
+mry+=dif_y;
+}
+
+if grid_resizing
+{
+mrw+=dif_x;
+mrh+=dif_y;
+
+mrw=clamp(mrw,0,room_width);
+mrh=clamp(mrh,0,room_height);
+
+}
+
 clr(c_black,0.1);
 
-for(ix=0;ix&lt;=room_width;ix+=mrizka_w) draw_line(ix+mrizka_x,0,ix+mrizka_x,room_height);
-for(iy=0;iy&lt;=room_height;iy+=mrizka_h) draw_line(0,iy+mrizka_y,room_width,iy+mrizka_y);
+for(ix=mx0;ix&lt;=mx1;ix+=mrw) draw_line(ix+mrx,my0,ix+mrx,my1);
+for(iy=my0;iy&lt;=my1;iy+=mrh) draw_line(mx0,iy+mry,mx1,iy+mry);
 
 clr(c_black,1);
 }

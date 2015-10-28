@@ -32,4 +32,9 @@ start_xx = 0;  // X-ová souřadnice
 start_yy = 0;  // Y-ová souřadnice
 dif_x=0;       // rozdílová X
 dif_y=0;       // rozdílová Y
+Mx=mouse_x;    // cursor buffer x
+My=mouse_y;    // cursor buffer y
 }
+
+
+
