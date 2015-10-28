@@ -50,10 +50,12 @@ menu_level=0;
         <arguments>
           <argument>
             <kind>1</kind>
-            <string>///virtual_keys
+            <string>///virtual_keys - vyřazeno
 
 BTN_w=display_get_gui_width()/32; //pul sirky tlacitka
 BTN_h=display_get_gui_height()/50; //pul vysky tlacitka
+safe_area=BTN_h*3;
+
 
 for(i=1;i&lt;=12;i++)
 {
@@ -104,6 +106,8 @@ draw_text(drx,dry,menu_names(i,menu_level)); clr(c_black);
 
 set_font(4,c_black,1,menu_font);
 draw_text(20,BTN_h*3,'Mode: '+mode_name(value));
+
+
 
 
 </string>
@@ -202,11 +206,13 @@ visible=!visible;
             <kind>1</kind>
             <string>///test F kláves a provedení jejich funkce
 
+if visible
+{
 F=get_F_key(ev_keyrelease);
 show_debug_message('F: '+string(F));
 
 //provede akci a vrátí nastavený level
-if is_between(1,F,12)
+if is_between(1,F,12) &amp;&amp; !keyboard_check_direct(vk_end)
 {
 var bvalue=value; //původní mód
 
@@ -215,6 +221,8 @@ show_debug_message('F'+string(F)+' menu used. Current level: '+string(menu_level
 
 if bvalue!=value event_perform_object(oController,ev_mouse,ev_global_right_release); //při změně opusť rozdělané manipulace
 }
+}
+
 
 </string>
           </argument>

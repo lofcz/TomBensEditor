@@ -42,7 +42,7 @@ case 0:
  //F4
  case 4:
   clr(ccc)
-  return('PROPS');
+  return('PROPRTS');
  break;
  //F5
  case 5:

@@ -183,11 +183,16 @@ no_snap=no_snap || oCursorMode.value==DEPTH;
 no_snap=no_snap || oCursorMode.value==GMOVE;
 no_snap=no_snap || oCursorMode.value==GSIZE;
 
+//kurzor v menu
+if (mouse_y&lt;oCursorMode.safe_area &amp;&amp; oCursorMode.visible==1)
+  { no_snap=1; window_set_cursor(cr_default); event_perform(ev_mouse,ev_global_right_release); } 
+else 
+  { window_set_cursor(cr_none); }
 
-
-if mrizka_snap &amp;&amp; !no_snap // klávesy X,Y znamenají axis lock
+//přichytávač
+if mrizka_snap &amp;&amp; !no_snap 
 {
-if !keyboard_check_direct(ord('X')) Mx=(round(mouse_x/mrizka_w)*mrizka_w)+mrizka_x;
+if !keyboard_check_direct(ord('X')) Mx=(round(mouse_x/mrizka_w)*mrizka_w)+mrizka_x;   // klávesy X,Y znamenají axis lock
 if !keyboard_check_direct(ord('Y')) My=(round(mouse_y/mrizka_h)*mrizka_h)+mrizka_y;
 }
 else
@@ -277,6 +282,7 @@ rotating=0;
 grid_moving=0;
 grid_resizing=0;
 creating_surface=0;
+io_clear();
 
 
 </string>
@@ -422,8 +428,8 @@ creating_surface=0;
     
     mrizka_w=(mrizka_w+dif_x);
     mrizka_h=(mrizka_h+dif_y);
-    mrizka_w=clamp(mrizka_w,0,room_width);
-    mrizka_h=clamp(mrizka_h,0,room_height);    
+    mrizka_w=clamp(mrizka_w,2,room_width);
+    mrizka_h=clamp(mrizka_h,2,room_height);    
     
     grid_resizing = 0; // konec posunu mřížky
     }
@@ -1438,8 +1444,8 @@ if grid_resizing
 mrw+=dif_x;
 mrh+=dif_y;
 
-mrw=clamp(mrw,0,room_width);
-mrh=clamp(mrh,0,room_height);
+mrw=clamp(mrw,2,room_width);
+mrh=clamp(mrh,2,room_height);
 
 }
 
@@ -1453,6 +1459,8 @@ clr(c_black,1);
 
 
 //vykreslení kurzoru
+if window_get_cursor()==cr_none
+{
 draw_circle_colour(Mx,My,4,c_gray,c_gray,false);
 
 if alarm[0]&lt;cursor_stay
@@ -1460,6 +1468,7 @@ if alarm[0]&lt;cursor_stay
 draw_circle_colour(Mx,My,5,c_yellow,c_gray,false);
 draw_circle_colour(Mx,My,8,c_dkgray,c_gray,false);
 draw_circle_colour(Mx,My,12,c_silver,c_gray,false);
+}
 }
 
 
