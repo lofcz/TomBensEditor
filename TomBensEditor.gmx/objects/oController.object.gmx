@@ -222,7 +222,7 @@ if !keyboard_check_direct(ord('Y')) My=mouse_y;
             <string>///Přemisťování nebo změny velikosti (surface, mřížky..) - výpočet diferenciálu
 
 //pohyb nebo změna velikosti surface
-if moving==1 || resizing==1
+if (moving==1 || resizing==1) || rotating==1
 {
 dif_x= Mx - start_xx  ;  // X-ová souřadnice
 dif_y= My - start_yy  ;  // Y-ová souřadnice
@@ -273,6 +273,7 @@ dif_x=d; dif_y=d;
             <string>///zanech všeho
 moving=0;
 resizing=0;
+rotating=0;
 grid_moving=0;
 grid_resizing=0;
 creating_surface=0;
@@ -302,7 +303,7 @@ creating_surface=0;
             <kind>1</kind>
             <string>///moving - zastavení
 
-    if (oCursorMode.value==MOVE) // Pokud není vybraný žádný povrch a kliklo se, vytváříme nový povrch
+    if (oCursorMode.value==MOVE) &amp;&amp; moving=1 // Pokud není vybraný žádný povrch a kliklo se, vytváříme nový povrch
     {
     
     for(i=0;i&lt;max_surfaces;i++) //pro všechny povrchy
@@ -346,9 +347,46 @@ creating_surface=0;
         <arguments>
           <argument>
             <kind>1</kind>
+            <string>///rotating - zastavení
+
+    if (oCursorMode.value==ROTATE) &amp;&amp; rotating=1 // Pokud není vybraný žádný povrch a kliklo se, vytváříme nový povrch
+    {
+    
+    for(i=0;i&lt;max_surfaces;i++) //pro všechny povrchy
+    {
+     if g[#_selected,i]==1 //které jsou vybrány
+       {
+        //položit
+        g[#_angle,i]=mean(dif_x,dif_y);
+       }
+    }
+    
+    rotating = 0; // konec rotace
+    }
+
+</string>
+          </argument>
+        </arguments>
+      </action>
+      <action>
+        <libid>1</libid>
+        <id>603</id>
+        <kind>7</kind>
+        <userelative>0</userelative>
+        <isquestion>0</isquestion>
+        <useapplyto>-1</useapplyto>
+        <exetype>2</exetype>
+        <functionname></functionname>
+        <codestring></codestring>
+        <whoName>self</whoName>
+        <relative>0</relative>
+        <isnot>0</isnot>
+        <arguments>
+          <argument>
+            <kind>1</kind>
             <string>///přesun mřížky - zastavení
 
-    if (oCursorMode.value==GMOVE) // Pokud není vybraný žádný povrch a kliklo se, vytváříme nový povrch
+    if (oCursorMode.value==GMOVE) &amp;&amp; grid_moving=1 // Pokud není vybraný žádný povrch a kliklo se, vytváříme nový povrch
     {
     
     mrizka_x=(mrizka_x+dif_x) mod mrizka_w;
@@ -379,7 +417,7 @@ creating_surface=0;
             <kind>1</kind>
             <string>///změna velikosti mřížky - zastavení
 
-    if (oCursorMode.value==GSIZE) 
+    if (oCursorMode.value==GSIZE) &amp;&amp; grid_resizing=1
     {
     
     mrizka_w=(mrizka_w+dif_x);
@@ -412,7 +450,7 @@ creating_surface=0;
             <kind>1</kind>
             <string>///resizing a scaling - položení tahu myši
 
-    if (oCursorMode.value==RESIZE) || (oCursorMode.value==SCALE) // mód kurzoru je RESIZE nebo SCALE
+    if ((oCursorMode.value==RESIZE) || (oCursorMode.value==SCALE)) &amp;&amp; resizing=1 // mód kurzoru je RESIZE nebo SCALE
     {
     
     for(i=0;i&lt;max_surfaces;i++) //pro všechny povrchy
@@ -496,7 +534,7 @@ creating_surface=0;
             <kind>1</kind>
             <string>///dokončení tvorby nového a zápis do ds_
 
-if (oCursorMode.value==ADD) &amp;&amp; creating_surface // Pokud tvoříme povrch
+if (oCursorMode.value==ADD) &amp;&amp; creating_surface=1 // Pokud tvoříme povrch
    { 
         surface_x = abs(Mx-start_xx); // Šířka surface (prozatím unused)
         surface_y = abs(My-start_yy); // Výška surface (prozatím unused)
@@ -532,6 +570,9 @@ if (oCursorMode.value==ADD) &amp;&amp; creating_surface // Pokud tvoříme povrc
         //zvětšení je na začátku 1:1
         g[#_xscale,position_in_grid]=1;
         g[#_yscale,position_in_grid]=1;
+
+        //rotace nulová
+        g[#_angle,position_in_grid]=0;
         
        }
        
@@ -711,6 +752,39 @@ if (oCursorMode.value = KILL) // Pakliže máme vybraný stav kursoru jako "kill
     if (oCursorMode.value==MOVE)&amp;&amp; moving==0 // Pokud není vybraný žádný povrch a kliklo se, vytváříme nový povrch
     {
     moving = 1; // Posunujeme povrchy
+   
+    // Do 2D vektoru si uložíme souřadnice kurzoru(x,y)
+    start_xx = Mx;  // X-ová souřadnice
+    start_yy = My;  // Y-ová souřadnice
+    
+    }
+        
+
+</string>
+          </argument>
+        </arguments>
+      </action>
+      <action>
+        <libid>1</libid>
+        <id>603</id>
+        <kind>7</kind>
+        <userelative>0</userelative>
+        <isquestion>0</isquestion>
+        <useapplyto>-1</useapplyto>
+        <exetype>2</exetype>
+        <functionname></functionname>
+        <codestring></codestring>
+        <whoName>self</whoName>
+        <relative>0</relative>
+        <isnot>0</isnot>
+        <arguments>
+          <argument>
+            <kind>1</kind>
+            <string>///start rotate
+
+    if (oCursorMode.value==ROTATE)&amp;&amp; rotating==0 // Pokud není vybraný žádný povrch a kliklo se, vytváříme nový povrch
+    {
+    rotating = 1; // Posunujeme povrchy
    
     // Do 2D vektoru si uložíme souřadnice kurzoru(x,y)
     start_xx = Mx;  // X-ová souřadnice
@@ -1088,7 +1162,7 @@ if (oCursorMode.value==ADD) &amp;&amp; (creating_surface==1) // Pokud tvoříme 
         <arguments>
           <argument>
             <kind>1</kind>
-            <string>/// Vykreslení všech surfaces
+            <string>/// Vykreslení všech surfaces a manipulačních obrysů
 
    
        //první by se měly vykreslit ty s nejnižší depth, stejné depth pak podle pořadí vytvoření
@@ -1132,17 +1206,6 @@ if (oCursorMode.value==ADD) &amp;&amp; (creating_surface==1) // Pokud tvoříme 
                 y2=g[#_ys2,i];
                }
                     
-  
-               //pohybujeme
-               if g[#_selected,i]=1 &amp;&amp; moving==1 
-               {
-                x1+=dif_x;
-                y1+=dif_y;
-                x2+=dif_x;
-                y2+=dif_y;
-               }
-               //--                             
-
                  
                //obsah kopíruje source pokud není zapečen
                if g[#_baked,i]==0 surface_copy_part(g[#_id,i],0,0,ssource,g[#_xs1,i],g[#_ys1,i],g[#_xs2,i]-g[#_xs1,i],g[#_ys2,i]-g[#_ys1,i]);
@@ -1162,9 +1225,9 @@ if (oCursorMode.value==ADD) &amp;&amp; (creating_surface==1) // Pokud tvoříme 
                if source_mode==0
                {
                 if keyboard_check_direct(ord('H')) //dočasně skryje nevybrané
-                 { if (g[#_selected,i]) draw_surface_ext(g[#_id,i],x1+zsx,y1+zsy,g[#_xscale,i],g[#_yscale,i],0,c_white,1); }
+                 { if (g[#_selected,i]) draw_surface_ext(g[#_id,i],x1+zsx,y1+zsy,g[#_xscale,i],g[#_yscale,i],g[#_angle,i],c_white,1); }
                 else
-                 { draw_surface_ext(g[#_id,i],x1+zsx,y1+zsy,g[#_xscale,i],g[#_yscale,i],0,c_white,1); }
+                 { draw_surface_ext(g[#_id,i],x1+zsx,y1+zsy,g[#_xscale,i],g[#_yscale,i],g[#_angle,i],c_white,1); }
                }
                else
                {
@@ -1177,15 +1240,38 @@ if (oCursorMode.value==ADD) &amp;&amp; (creating_surface==1) // Pokud tvoříme 
                //--
                
                
+               /**** Pomocné obrysy pro transformace ****/
+               
                //měníme velikost - vykreslení obrysu
-               if g[#_selected,i]=1 &amp;&amp; resizing==1 
+               if g[#_selected,i]=1 &amp;&amp; resizing==1
                {
-                var Xkey=!keyboard_check_direct(ord('X'));
-                var Ykey=!keyboard_check_direct(ord('Y'));                
-                draw_rectangle(x1-(dif_x*Xkey),y1-(dif_y*Ykey),x2+(dif_x*Xkey),y2+(dif_y*Ykey),1);
+                draw_rectangle(x1-dif_x,y1-dif_y,x2+dif_x,y2+dif_y,1);
                }
                //-- 
                
+               //pohybujeme - vykreslení obrysu
+               if g[#_selected,i]=1 &amp;&amp; moving==1
+               {
+                draw_rectangle(x1+dif_x,y1+dif_y,x2+dif_x,y2+dif_y,1);
+               }
+               //-- 
+               
+               //rotujeme - vykreslení obrysu
+               if g[#_selected,i]=1 &amp;&amp; rotating==1 
+               {         
+                //připravit     
+                var shad=surface_create(x2-x1,y2-y1);
+                surface_set_target(shad);
+                 draw_clear_alpha(c_black,0.1); //úroveň krytí
+                surface_reset_target();
+                
+                //kreslit
+                draw_surface_ext(shad,x1+zsx,y1+zsy,g[#_xscale,i],g[#_yscale,i],mean(dif_x,dif_y),c_white,1);
+                surface_free(shad);
+               }
+               //-- 
+               
+               /****/
                
              }
              //---
@@ -1246,24 +1332,8 @@ if (oCursorMode.value==ADD) &amp;&amp; (creating_surface==1) // Pokud tvoříme 
                 x2=g[#_xs2,i];
                 y2=g[#_ys2,i];
                }
-                    
-  
-               
-               if g[#_selected,i]=1 &amp;&amp; moving=1 //pohybujeme
-               {
-                x1+=dif_x;
-                y1+=dif_y;
-                x2+=dif_x;
-                y2+=dif_y;
-               }
 
-               
-               
-               //draw_rectangle(x1,y1,x2,y2,0);
-              // draw_set_alpha(0.7);
-              // draw_rectangle(x1,y1,x2,y2,1);
-              // draw_set_alpha(1);
-              
+                
               // Pokud je povrch vybraný, pushneme vykreslení okraje
               if (g[#_selected,i]) {clr(c_purple); draw_rectangle(x1,y1,x2,y2,1); draw_rectangle(x1+1,y1+1,x2-1,y2-1,1); clr();}
               
@@ -1289,7 +1359,25 @@ if (oCursorMode.value==ADD) &amp;&amp; (creating_surface==1) // Pokud tvoříme 
                   
                   draw_rectangle(zx1,zy1,zx2,zy2,1);                        
                  }
-             //--
+             //-- 
+             
+             // Pokud je povrch rotovaný, zobrazí se rotace
+             if (g[#_angle,i]!=0)
+                 {
+                   var size_r=min(x2-x1,y2-y1);
+                   var scaler=0;
+                   var scaler_step=1/abs(g[#_angle,i]);
+                   draw_set_alpha(0.5);
+                   
+                   for(a=min(0,g[#_angle,i]);a&lt;=max(0,g[#_angle,i]);a++)
+                   {
+                   draw_line(x1,y1,x1+lengthdir_x(size_r*scaler,a),y1+lengthdir_y(size_r*scaler,a));
+                   scaler+=scaler_step;
+                   }
+                   draw_set_alpha(1);
+                 }
+             //-- 
+                          
               
                
                draw_text(x1,y1, "ID: "+string(g[#_id,i])+' at '+string(i) );

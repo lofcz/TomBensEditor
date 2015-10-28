@@ -208,8 +208,12 @@ show_debug_message('F: '+string(F));
 //provede akci a vrátí nastavený level
 if is_between(1,F,12)
 {
+var bvalue=value; //původní mód
+
 menu_level=menu_function(F,menu_level);
 show_debug_message('F'+string(F)+' menu used. Current level: '+string(menu_level)+' Current mode: '+mode_name(value));
+
+if bvalue!=value event_perform_object(oController,ev_mouse,ev_global_right_release); //při změně opusť rozdělané manipulace
 }
 
 </string>

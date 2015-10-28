@@ -49,7 +49,7 @@
   <rooms name="rooms">
     <room>rooms\formMain</room>
   </rooms>
-  <constants number="29">
+  <constants number="30">
     <constant name="on">true</constant>
     <constant name="off">false</constant>
     <constant name="SELECT">0</constant>
@@ -79,6 +79,7 @@
     <constant name="_group">12</constant>
     <constant name="_xscale">13</constant>
     <constant name="_yscale">14</constant>
+    <constant name="_angle">15</constant>
   </constants>
   <help>
     <rtf>help.rtf</rtf>
