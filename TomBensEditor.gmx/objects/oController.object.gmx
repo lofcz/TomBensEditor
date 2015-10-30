@@ -92,6 +92,31 @@ grid_resizing=0;
         <arguments>
           <argument>
             <kind>1</kind>
+            <string>///blend defaults
+
+picked_alpha=0.75;
+
+
+</string>
+          </argument>
+        </arguments>
+      </action>
+      <action>
+        <libid>1</libid>
+        <id>603</id>
+        <kind>7</kind>
+        <userelative>0</userelative>
+        <isquestion>0</isquestion>
+        <useapplyto>-1</useapplyto>
+        <exetype>2</exetype>
+        <functionname></functionname>
+        <codestring></codestring>
+        <whoName>self</whoName>
+        <relative>0</relative>
+        <isnot>0</isnot>
+        <arguments>
+          <argument>
+            <kind>1</kind>
             <string>/// Inicializace ostatních proměnných
 
 g_reset_defaults();
@@ -173,6 +198,43 @@ alarm[0]=cursor_blink_time;
         <arguments>
           <argument>
             <kind>1</kind>
+            <string>///color and alpha updates
+
+
+//pokud je ALPHA mód kurzoru, a kurzor v pásku změny alfy a stisknuta levá myš
+if oCursorMode.value==ALPHA
+{
+if window_get_cursor()==cr_default
+{
+if mouse_y&gt;oCursorMode.hpos
+{
+if mouse_check_button(mb_left) picked_alpha=mouse_x/room_width;
+}
+}
+}
+
+
+
+</string>
+          </argument>
+        </arguments>
+      </action>
+      <action>
+        <libid>1</libid>
+        <id>603</id>
+        <kind>7</kind>
+        <userelative>0</userelative>
+        <isquestion>0</isquestion>
+        <useapplyto>-1</useapplyto>
+        <exetype>2</exetype>
+        <functionname></functionname>
+        <codestring></codestring>
+        <whoName>self</whoName>
+        <relative>0</relative>
+        <isnot>0</isnot>
+        <arguments>
+          <argument>
+            <kind>1</kind>
             <string>///mrizka výpočet polohy kursoru
  
  
@@ -183,9 +245,13 @@ no_snap=no_snap || oCursorMode.value==DEPTH;
 no_snap=no_snap || oCursorMode.value==GMOVE;
 no_snap=no_snap || oCursorMode.value==GSIZE;
 
-//kurzor v menu
+//kurzor jde do  menu - cr_default, jinak cr_none
 if (mouse_y&lt;oCursorMode.safe_area &amp;&amp; oCursorMode.visible==1)
-  { no_snap=1; window_set_cursor(cr_default); event_perform(ev_mouse,ev_global_right_release); } 
+  { 
+   no_snap=1; window_set_cursor(cr_default); //vypnout přitahování a změnit kurzor
+   if oCursorMode!=ALPHA //kromě tahání v blend pruhu při vjezdu do menu vypnout "tahací" funkce
+   { event_perform(ev_mouse,ev_global_right_release); }
+  } 
 else 
   { window_set_cursor(cr_none); }
 

@@ -259,6 +259,134 @@ case 5:
 break;
 //---
 
+//---level 6----------------------------------------------------------------------------------
+case 6:
+ switch(argument[0]) //key switch
+ {
+ //F1
+ case 1:
+ return('COLOR');
+ break;
+ //F2
+ case 2:
+ return('ALPHA');
+ break;
+ 
+ //F11
+ case 11:
+  return('HELP');
+ break;
+ //F12
+ case 12:
+  return('BACK');
+ break; 
+ 
+ //---Other keycodes---
+ default:
+ return('');
+ break; 
+ }
+break;
+//---
+
+//---level 7----------------------------------------------------------------------------------
+case 7:
+ switch(argument[0]) //key switch
+ {
+ //F1
+ case 1:
+ return('█');
+ break;
+ //F2
+ case 2:
+ return('╔');
+ break;
+ //F3
+ case 3:
+ return('╗');
+ break;
+  //F4
+ case 4:
+ return('╚');
+ break;
+  //F5
+ case 5:
+ return('╝');
+ break;
+  //F6
+ case 6:
+ return('HUE');
+ break;
+  //F7
+ case 7:
+ return('SAT');
+ break;
+  //F8
+ case 8:
+ return('VAL');
+ break; 
+   //F9
+ case 9:
+ return('RELATIVE');
+ break;
+
+ 
+  
+ //F11
+ case 11:
+  return('HELP');
+ break;
+ //F12
+ case 12:
+  return('BACK');
+ break; 
+ 
+ //---Other keycodes---
+ default:
+ return('');
+ break; 
+ }
+break;
+//---
+
+//---level 8----------------------------------------------------------------------------------
+case 8:
+ switch(argument[0]) //key switch
+ {
+ //F1
+ case 1:
+ return('SET '+string(oController.picked_alpha));
+ break;
+ //F2
+ case 2:
+ return('SET 100%');
+ break;
+ //F2
+ case 3:
+ return('SET 50%');
+ break;
+ //F2
+ case 4:
+ return('SET 0%');
+ break;
+ 
+ 
+ //F11
+ case 11:
+  return('HELP');
+ break;
+ //F12
+ case 12:
+  return('BACK');
+ break; 
+ 
+ //---Other keycodes---
+ default:
+ return('');
+ break; 
+ }
+break;
+//---
 
 //---level 999----------------------------------------------------------------------------------
 case 666:

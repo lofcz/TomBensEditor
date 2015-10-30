@@ -27,8 +27,11 @@
             <kind>1</kind>
             <string>///init
 value=ADD;
-//saved_mode=value;
+saved_mode=value;
 menu_level=0;
+
+a_bar=-1;
+
 
 </string>
           </argument>
@@ -54,7 +57,7 @@ menu_level=0;
 
 BTN_w=display_get_gui_width()/32; //pul sirky tlacitka
 BTN_h=display_get_gui_height()/50; //pul vysky tlacitka
-safe_area=BTN_h*3;
+safe_area=BTN_h*4;
 
 
 for(i=1;i&lt;=12;i++)
@@ -104,11 +107,96 @@ if F!=i clr(c_black) else clr(c_white);
 draw_text(drx,dry,menu_names(i,menu_level)); clr(c_black);
 }
 
-set_font(4,c_black,1,menu_font);
+set_font(7,c_black,1,menu_font);
 draw_text(20,BTN_h*3,'Mode: '+mode_name(value));
 
 
 
+
+</string>
+          </argument>
+        </arguments>
+      </action>
+    </event>
+    <event eventtype="8" enumb="0">
+      <action>
+        <libid>1</libid>
+        <id>603</id>
+        <kind>7</kind>
+        <userelative>0</userelative>
+        <isquestion>0</isquestion>
+        <useapplyto>-1</useapplyto>
+        <exetype>2</exetype>
+        <functionname></functionname>
+        <codestring></codestring>
+        <whoName>self</whoName>
+        <relative>0</relative>
+        <isnot>0</isnot>
+        <arguments>
+          <argument>
+            <kind>1</kind>
+            <string>///draw alphabar
+
+//připravit
+if !surface_exists(a_bar)
+{
+a_bar=surface_create(room_width,BTN_h);
+surface_set_target(a_bar);
+ca[1]=c_white;
+ca[2]=c_gray;
+hpos=BTN_h*3;
+ww=BTN_h; 
+hh=BTN_h/2;
+o=BTN_h;
+draw_set_alpha(1);
+
+for(i=0;i&lt;room_width;i+=ww)
+{
+draw_line_width_colour(i,0,i,hh,ww,ca[1],ca[1]);
+draw_line_width_colour(i,hh,i,2*hh,ww,ca[2],ca[2]);
+draw_set_alpha(i/room_width);
+draw_line_width_colour(i,0,i,2*hh,ww,c_white,c_white);
+draw_set_alpha(1);
+swap_array_values(ca,1,2);
+}
+surface_reset_target();
+}
+
+
+//ukázat
+if value==ALPHA
+{
+draw_surface(a_bar,0,hpos);
+}
+
+
+
+</string>
+          </argument>
+        </arguments>
+      </action>
+    </event>
+    <event eventtype="9" enumb="17">
+      <action>
+        <libid>1</libid>
+        <id>603</id>
+        <kind>7</kind>
+        <userelative>0</userelative>
+        <isquestion>0</isquestion>
+        <useapplyto>-1</useapplyto>
+        <exetype>2</exetype>
+        <functionname></functionname>
+        <codestring></codestring>
+        <whoName>self</whoName>
+        <relative>0</relative>
+        <isnot>0</isnot>
+        <arguments>
+          <argument>
+            <kind>1</kind>
+            <string>///CTRL - dočasný SELECT uprostřed jiných módů
+saved_mode=value;
+value=SELECT;
+event_perform_object(oController,ev_mouse,ev_global_right_release);
 
 </string>
           </argument>
@@ -135,6 +223,31 @@ draw_text(20,BTN_h*3,'Mode: '+mode_name(value));
             <string>///Escape dotaz
 if menu_level!=0 menu_level=0 else menu_level=666;
 
+
+</string>
+          </argument>
+        </arguments>
+      </action>
+    </event>
+    <event eventtype="10" enumb="17">
+      <action>
+        <libid>1</libid>
+        <id>603</id>
+        <kind>7</kind>
+        <userelative>0</userelative>
+        <isquestion>0</isquestion>
+        <useapplyto>-1</useapplyto>
+        <exetype>2</exetype>
+        <functionname></functionname>
+        <codestring></codestring>
+        <whoName>self</whoName>
+        <relative>0</relative>
+        <isnot>0</isnot>
+        <arguments>
+          <argument>
+            <kind>1</kind>
+            <string>///CTRL - dočasný SELECT uprostřed jiných módů
+value=saved_mode;
 
 </string>
           </argument>

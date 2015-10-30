@@ -13,6 +13,10 @@ case SCALE: return('SCALE'); break;
 case ROTATE: return('ROTATE'); break;
 case GMOVE: return('GRID MOVE'); break;
 case GSIZE: return('GRID RESIZE'); break;
+case ALPHA: return('CHANGE ALPHA CHANNEL'); break;
+case HUE: return('CHANGE HUE'); break;
+case SAT: return('CHANGE SATURATION'); break;
+case BRIGHTNESS: return('CHANGE BRIGHTNESS'); break;
 
 default: return('UNKNOWN'); break;
 }

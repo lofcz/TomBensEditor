@@ -42,7 +42,10 @@ case 0:
  case 7:
   return(5);
  break;
-   
+  //F8
+ case 8:
+  return(6);
+ break;   
  
  //F11
  case 11:
@@ -82,6 +85,7 @@ case 1:
 
  //F12
  case 12:                               //BACK
+  value=SELECT;
   return(0);
  break;
  
@@ -128,6 +132,7 @@ case 2:
 
  //F12
  case 12:                               //BACK
+  value=SELECT;
   return(0);
  break;
  
@@ -170,6 +175,7 @@ case 3:
 
  //F12
  case 12:                               //BACK
+  value=SELECT;
   return(0);
  break;
  
@@ -207,6 +213,7 @@ case 4:
 
  //F12
  case 12:                               //BACK
+  value=SELECT;
   return(0);
  break;
  
@@ -258,6 +265,7 @@ case 5:
 
  //F12
  case 12:                               //BACK
+  value=SELECT;
   return(0);
  break;
  
@@ -272,6 +280,116 @@ break;
 //---
 
 
+//BLEND
+//---level 6----------------------------------------------------------------------------------
+case 6:
+ switch(argument[0]) //key switch
+ {
+ //F1
+ case 1:                       
+  return(7);                             //COLOR
+ break;
+ //F2
+ case 2:
+  value=ALPHA;
+  return(8);                             //ALPHA
+ break;
+
+
+ 
+ //F11
+ case 11:
+  return(argument[1]);                  //HELP
+ break;
+
+ //F12
+ case 12:                               //BACK
+  value=SELECT;
+  return(0);
+ break;
+ 
+   
+ //---Other keycodes---
+ default:
+ warning(001,string(argument[0]));
+ return(argument[1]);
+ break; 
+ }
+break;
+//---
+
+
+//COLOR
+//---level 7----------------------------------------------------------------------------------
+case 7:
+ switch(argument[0]) //key switch
+ {
+ //F1
+ case 1:      
+ return(argument[1]);                    //COLOR SQUARE
+ break;
+ //F2
+ case 2:
+ return(argument[1]);                    //SET LEFT SIDE TOP
+ break;
+ //F3
+ case 3:
+ return(argument[1]);                    //SET RIGHT SIDE TOP
+ break;
+ //F4
+ case 4:
+ return(argument[1]);                    //SET LEFT SIDE BOTTOM
+ break;
+ //F5
+ case 5:
+ return(argument[1]);                    //SET RIGHT SIDE BOTTOM
+ break;
+
+ //F6
+ case 6:
+ value=HUE;
+ return(argument[1]);                    //HUE
+ break;
+ //F7
+ case 7:
+ value=SAT;
+ return(argument[1]);                    //SAT
+ break;
+ //F8
+ case 8:
+ value=BRIGHTNESS;
+ return(argument[1]);                    //VAL
+ break;
+ //F9
+ case 9:
+ return(argument[1]);                    //RELATIVE
+ break;
+
+ 
+ //F11
+ case 11:
+  return(argument[1]);                  //HELP
+ break;
+
+ //F12
+ case 12:                               //BACK
+  value=SELECT;
+  return(0);
+ break;
+ 
+   
+ //---Other keycodes---
+ default:
+ warning(001,string(argument[0]));
+ return(argument[1]);
+ break; 
+ }
+break;
+//---
+
+
+
+
 //GO TO HELL
 //---level 666----------------------------------------------------------------------------------
 case 666:
@@ -284,6 +402,7 @@ case 666:
 
  //F12
  case 12:
+  value=SELECT;
   return(0);
  break; 
  
